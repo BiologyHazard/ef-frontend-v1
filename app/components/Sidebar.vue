@@ -4,23 +4,27 @@
     <div class="sidebar-logo">
       <div class="logo-wrapper">
         <svg class="logo-svg" fill="none" height="32.25199890136719"
-             viewBox="0 0 46.20566463470459 32.25199890136719" width="46.20566463470459" xmlns="http://www.w3.org/2000/svg"
+             viewBox="0 0 46.20566463470459 32.25199890136719" width="46.20566463470459"
+             xmlns="http://www.w3.org/2000/svg"
              xmlns:xlink="http://www.w3.org/1999/xlink">
           <rect fill="rgba(249, 249, 249, 1)" height="0" width="0" x="0" y="0"/>
           <g>
-            <path d="M14.4413 32.252L32.1293 32.252L32.1293 28.908L25.6613 28.908L25.6613 0L22.5813 0C20.8213 1.012 18.7533 1.76 15.8933 2.288L15.8933 4.84L21.6573 4.84L21.6573 28.908L14.4413 28.908L14.4413 32.252Z"
-                  fill="currentColor">
+            <path
+                d="M14.4413 32.252L32.1293 32.252L32.1293 28.908L25.6613 28.908L25.6613 0L22.5813 0C20.8213 1.012 18.7533 1.76 15.8933 2.288L15.8933 4.84L21.6573 4.84L21.6573 28.908L14.4413 28.908L14.4413 32.252Z"
+                fill="currentColor">
             </path>
           </g>
           <ellipse cx="22.978261089520018" cy="24.629596248131953"
                    rx="23.408917522625487"
-                   ry="4.41759826229211" stroke="currentColor" stroke-width="2" transform="rotate(-19.614696980142693 -0.43065643310546875 20.211997985839844)">
+                   ry="4.41759826229211" stroke="currentColor" stroke-width="2"
+                   transform="rotate(-19.614696980142693 -0.43065643310546875 20.211997985839844)">
           </ellipse>
           <circle cx="37.06934356689453" cy="15.711997985839844" fill="currentColor" r="3.5">
           </circle>
           <ellipse cx="37.51921338448104" cy="13.823112653989034"
                    rx="7.999996847005453" ry="1.383430647153096"
-                   stroke="currentColor" stroke-width="1" transform="rotate(12.416193091380716 29.519216537475586 12.439682006835938)">
+                   stroke="currentColor" stroke-width="1"
+                   transform="rotate(12.416193091380716 29.519216537475586 12.439682006835938)">
           </ellipse>
           <path
               d="M8.56934 8.712L6.7411 8.04025L6.06934 6.212L5.39759 8.04025L3.56934 8.712L5.39759 9.38375L6.06934 11.212L6.7411 9.38375L8.56934 8.712Z"
@@ -36,76 +40,99 @@
       <div class="logo-divider"></div>
     </div>
 
-    <!-- 菜单组 -->
-    <div
-        v-for="(primaryItem, primaryIndex) in menuItems"
-        :key="primaryIndex"
-        class="menu-group"
-    >
+    <!-- 菜单容器（用于高亮区域的定位） -->
+    <div ref="menuContainerRef" class="menu-container">
+      <!-- 一级菜单高亮区域 -->
       <div
-          :class="{ active: activePrimary === primaryIndex, expanded: expandedItems.includes(primaryIndex) }"
-          class="primary-item"
-          @click="togglePrimary(primaryIndex)"
+          :style="{
+            transform: `translateY(${primaryHighlightTop}px)`,
+            height: `${primaryHighlightHeight}px`,
+            opacity: primaryHighlightHeight > 0 ? 1 : 0
+          }"
+          class="primary-highlight"
+      ></div>
+
+      <!-- 二级菜单高亮区域 -->
+      <div
+          :style="{
+            transform: `translateY(${secondaryHighlightTop}px)`,
+            height: `${secondaryHighlightHeight}px`,
+            opacity: (secondaryHighlightHeight > 0 && isSidebarExpanded) ? 1 : 0
+          }"
+          class="secondary-highlight"
+      ></div>
+
+      <!-- 菜单组 -->
+      <div
+          v-for="(primaryItem, primaryIndex) in menuItems"
+          :key="primaryIndex"
+          :ref="el => setPrimaryItemRef(el, primaryIndex)"
+          class="menu-group"
       >
-        <!-- 激活指示器 -->
-        <div :class="{ active: activePrimary === primaryIndex }" class="active-indicator"></div>
-
-        <!-- 一级菜单图标 -->
-        <svg
-            :viewBox="primaryItem.iconViewBox || '0 0 24 24'"
-            class="primary-icon"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-              :d="primaryItem.iconPath"
-              fill="currentColor"
-              stroke="none"
-          />
-        </svg>
-
-        <!-- 菜单项内容 -->
-        <span class="primary-text">{{ $t(`menu.${primaryItem.key}`) }}</span>
-
-        <!-- SVG 展开图标 -->
-        <svg
-            :class="{ expanded: expandedItems.includes(primaryIndex) }"
-            class="expand-icon"
-            viewBox="0 0 12 12"
-            xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-              d="M2 4 L6 8 L10 4"
-              fill="none"
-              stroke="currentColor"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="1.5"
-          />
-        </svg>
-      </div>
-
-      <!-- 二级菜单 -->
-      <transition name="slide-down">
         <div
-            v-show="expandedItems.includes(primaryIndex)"
-            class="secondary-items"
+            :class="{ active: activePrimary === primaryIndex, expanded: expandedItems.includes(primaryIndex) }"
+            class="primary-item"
+            @click="togglePrimary(primaryIndex)"
         >
-          <NuxtLink
-              v-for="(secondaryItem, secondaryIndex) in primaryItem.children"
-              :key="secondaryIndex"
-              :class="{ active: isActiveRoute(secondaryItem.path) }"
-              :to="secondaryItem.path"
-              class="secondary-item"
-              @click="handleSecondaryClick"
+
+          <!-- 一级菜单图标 -->
+          <svg
+              :viewBox="primaryItem.iconViewBox || '0 0 24 24'"
+              class="primary-icon"
+              xmlns="http://www.w3.org/2000/svg"
           >
-            <!-- 二级菜单装饰点 -->
-            <svg class="secondary-dot" viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="3" cy="3" fill="currentColor" r="2"/>
-            </svg>
-            <span class="secondary-text">{{ $t(`menu.${secondaryItem.key}`) }}</span>
-          </NuxtLink>
+            <path
+                :d="primaryItem.iconPath"
+                fill="currentColor"
+                stroke="none"
+            />
+          </svg>
+
+          <!-- 菜单项内容 -->
+          <span class="primary-text">{{ $t(`menu.${primaryItem.key}`) }}</span>
+
+          <!-- SVG 展开图标 -->
+          <svg
+              :class="{ expanded: expandedItems.includes(primaryIndex) }"
+              class="expand-icon"
+              viewBox="0 0 12 12"
+              xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+                d="M2 4 L6 8 L10 4"
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+            />
+          </svg>
         </div>
-      </transition>
+
+        <!-- 二级菜单 -->
+        <transition name="slide-down">
+          <div
+              v-show="expandedItems.includes(primaryIndex)"
+              class="secondary-items"
+          >
+            <NuxtLink
+                v-for="(secondaryItem, secondaryIndex) in primaryItem.children"
+                :key="secondaryIndex"
+                :ref="el => setSecondaryItemRef(el, primaryIndex, secondaryIndex, secondaryItem.path)"
+                :class="{ active: isActiveRoute(secondaryItem.path) }"
+                :to="secondaryItem.path"
+                class="secondary-item"
+                @click="handleSecondaryClick"
+            >
+              <!-- 二级菜单装饰点 -->
+              <svg class="secondary-dot" viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="3" cy="3" fill="currentColor" r="2"/>
+              </svg>
+              <span class="secondary-text">{{ $t(`menu.${secondaryItem.key}`) }}</span>
+            </NuxtLink>
+          </div>
+        </transition>
+      </div>
     </div>
 
     <!-- 底部装饰 -->
@@ -116,6 +143,8 @@
 </template>
 
 <script lang="ts" setup>
+import {getDOMElement} from "~/utils/domUtil";
+
 interface Props {
   isDrawerOpen?: boolean
 }
@@ -129,7 +158,6 @@ const emit = defineEmits<{
 }>()
 
 const route = useRoute()
-const {t} = useI18n()
 
 const menuItems = [
   {
@@ -159,6 +187,114 @@ const activePrimary = computed(() => {
   )
 })
 
+// 菜单项 ref 存储
+const primaryItemRefs = ref<Map<number, HTMLElement>>(new Map())
+const secondaryItemRefs = ref<Map<string, HTMLElement>>(new Map())
+const menuContainerRef = ref<HTMLElement | null>(null)
+
+// 高亮区域位置和高度
+const primaryHighlightTop = ref(0)
+const primaryHighlightHeight = ref(0)
+const secondaryHighlightTop = ref(0)
+const secondaryHighlightHeight = ref(0)
+
+// 侧边栏展开状态（用于控制二级高亮区域的显示）
+const isSidebarExpanded = ref(false)
+
+// 设置一级菜单项 ref
+const setPrimaryItemRef = (el: any, index: number) => {
+  if (el) {
+    primaryItemRefs.value.set(index, el)
+  } else {
+    primaryItemRefs.value.delete(index)
+  }
+}
+
+// 设置二级菜单项 ref
+const setSecondaryItemRef = (el: any, primaryIndex: number, secondaryIndex: number, path: string) => {
+  if (el) {
+    secondaryItemRefs.value.set(path, el)
+  } else {
+    secondaryItemRefs.value.delete(path)
+  }
+}
+
+// 计算元素相对于容器的位置
+const getRelativeTop = (element: HTMLElement, container: HTMLElement): number => {
+  const elementRect = element.getBoundingClientRect()
+  const containerRect = container.getBoundingClientRect()
+  return elementRect.top - containerRect.top
+}
+
+// 更新一级菜单高亮位置
+const updatePrimaryHighlight = () => {
+  nextTick(() => {
+    const activeIndex = activePrimary.value
+    if (activeIndex >= 0) {
+      const primaryItemEl = primaryItemRefs.value.get(activeIndex)
+      const menuContainerEl = menuContainerRef.value
+
+      if (primaryItemEl && menuContainerEl) {
+        const primaryItem = primaryItemEl.querySelector('.primary-item') as HTMLElement
+
+        if (primaryItem) {
+          primaryHighlightTop.value = getRelativeTop(primaryItem, menuContainerEl)
+          primaryHighlightHeight.value = primaryItem.offsetHeight
+        }
+      }
+    } else {
+      primaryHighlightHeight.value = 0
+    }
+  })
+}
+
+// 更新二级菜单高亮位置
+const updateSecondaryHighlight = () => {
+  nextTick(() => {
+    const activePath = route.path
+    const activeSecondaryRef = secondaryItemRefs.value.get(activePath)
+    const menuContainerEl = menuContainerRef.value
+
+    // 获取实际的 DOM 元素
+    const activeSecondaryEl = getDOMElement(activeSecondaryRef)
+
+    if (activeSecondaryEl && menuContainerEl) {
+      // 检查元素是否可见（可能在展开动画中）
+      const rect = activeSecondaryEl.getBoundingClientRect()
+      const computedStyle = window.getComputedStyle(activeSecondaryEl)
+      const isVisible = computedStyle.display !== 'none' &&
+          computedStyle.visibility !== 'hidden' &&
+          computedStyle.opacity !== '0'
+
+      if (isVisible && rect.height > 0 && rect.width > 0) {
+        secondaryHighlightTop.value = getRelativeTop(activeSecondaryEl, menuContainerEl)
+        secondaryHighlightHeight.value = activeSecondaryEl.offsetHeight
+      } else {
+        // 如果元素不可见，延迟重试（等待展开动画完成）
+        setTimeout(() => {
+          const retryRef = secondaryItemRefs.value.get(activePath)
+          const retryEl = getDOMElement(retryRef)
+
+          if (retryEl && menuContainerEl) {
+            const retryRect = retryEl.getBoundingClientRect()
+            const retryComputedStyle = window.getComputedStyle(retryEl)
+            const retryIsVisible = retryComputedStyle.display !== 'none' &&
+                retryComputedStyle.visibility !== 'hidden' &&
+                retryComputedStyle.opacity !== '0'
+
+            if (retryIsVisible && retryRect.height > 0) {
+              secondaryHighlightTop.value = getRelativeTop(retryEl, menuContainerEl)
+              secondaryHighlightHeight.value = retryEl.offsetHeight
+            }
+          }
+        }, 400)
+      }
+    } else {
+      secondaryHighlightHeight.value = 0
+    }
+  })
+}
+
 const togglePrimary = (index: number) => {
   const idx = expandedItems.value.indexOf(index)
   if (idx > -1) {
@@ -166,6 +302,11 @@ const togglePrimary = (index: number) => {
   } else {
     expandedItems.value.push(index)
   }
+  // 更新高亮位置
+  setTimeout(() => {
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+  }, 400)
 }
 
 // 点击二级菜单项时关闭抽屉
@@ -185,7 +326,115 @@ watch(() => route.path, () => {
   if (primaryIndex >= 0 && !expandedItems.value.includes(primaryIndex)) {
     expandedItems.value.push(primaryIndex)
   }
+  // 更新高亮位置
+  setTimeout(() => {
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+  }, 400)
 }, {immediate: true})
+
+// 监听路由变化和菜单展开状态变化
+watch([() => route.path, () => activePrimary.value, () => expandedItems.value], () => {
+  updatePrimaryHighlight()
+  setTimeout(() => {
+    updateSecondaryHighlight()
+  }, 100)
+}, {deep: true})
+
+// 监听抽屉模式状态变化
+watch(() => props.isDrawerOpen, (newValue) => {
+  isSidebarExpanded.value = newValue || (sidebarElement?.offsetWidth || 0) > 150
+  setTimeout(() => {
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+  }, 100)
+})
+
+// 监听窗口大小变化和滚动（用于响应式）
+const handleResize = () => {
+  setTimeout(() => {
+    checkSidebarExpanded()
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+  }, 400)
+}
+
+let scrollFrame: number | null = null
+const handleScroll = () => {
+  if (scrollFrame !== null) {
+    cancelAnimationFrame(scrollFrame)
+  }
+  scrollFrame = requestAnimationFrame(() => {
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+    scrollFrame = null
+  })
+}
+
+let sidebarElement: HTMLElement | null = null
+
+// 检查侧边栏是否展开（通过宽度判断：展开时 17.5rem ≈ 280px，收起时 5rem ≈ 80px）
+const checkSidebarExpanded = () => {
+  // 如果抽屉模式打开，直接认为是展开状态
+  if (props.isDrawerOpen) {
+    isSidebarExpanded.value = true
+    return
+  }
+
+  if (sidebarElement) {
+    const width = sidebarElement.offsetWidth
+    // 如果宽度大于 150px，认为侧边栏已展开
+    isSidebarExpanded.value = width > 150
+  }
+}
+
+const handleMouseEnter = () => {
+  setTimeout(() => {
+    checkSidebarExpanded()
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+  }, 400) // 等待展开动画
+}
+
+const handleMouseLeave = () => {
+  setTimeout(() => {
+    checkSidebarExpanded()
+    updatePrimaryHighlight()
+    updateSecondaryHighlight()
+  }, 400) // 等待收起动画
+}
+
+onMounted(() => {
+  // 初始化检查侧边栏展开状态
+  sidebarElement = document.querySelector('.sidebar') as HTMLElement
+  if (sidebarElement) {
+    checkSidebarExpanded()
+  }
+
+  updatePrimaryHighlight()
+  updateSecondaryHighlight()
+
+  window.addEventListener('resize', handleResize)
+
+  // 监听 sidebar 的滚动
+  if (sidebarElement) {
+    sidebarElement.addEventListener('scroll', handleScroll)
+
+    // 监听鼠标进入/离开事件（用于 hover 状态）
+    sidebarElement.addEventListener('mouseenter', handleMouseEnter)
+    sidebarElement.addEventListener('mouseleave', handleMouseLeave)
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
+
+  if (sidebarElement) {
+    sidebarElement.removeEventListener('scroll', handleScroll)
+    sidebarElement.removeEventListener('mouseenter', handleMouseEnter)
+    sidebarElement.removeEventListener('mouseleave', handleMouseLeave)
+  }
+})
 </script>
 
 <style scoped>
@@ -258,12 +507,6 @@ watch(() => route.path, () => {
   transition: all var(--transition-base);
 }
 
-.logo-icon {
-  width: 3.5rem;
-  height: 3.5rem;
-  transition: all var(--transition-base);
-}
-
 .logo-svg {
   color: var(--logo-color);
   transition: color var(--transition-base);
@@ -321,6 +564,76 @@ watch(() => route.path, () => {
       transparent 100%
   );
   opacity: 0.5;
+}
+
+/* 菜单容器 */
+.menu-container {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 一级菜单高亮区域 */
+.primary-highlight {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0.75rem;
+  background-color: var(--theme-accent-color);
+  box-shadow: 0 0 0.75rem var(--theme-accent-color);
+  transition: transform var(--transition-base), height var(--transition-base), opacity var(--transition-base);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.primary-highlight::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-image: linear-gradient(
+      -45deg,
+      transparent,
+      transparent 13.9512529279%,
+      var(--theme-decorative-overlay) 0,
+      var(--theme-decorative-overlay) 36.0487470721%,
+      transparent 0,
+      transparent 63.9512529279%,
+      var(--theme-decorative-overlay) 0,
+      var(--theme-decorative-overlay) 86.0487470721%,
+      transparent 0,
+      transparent
+  );
+  background-size: 0.5rem 0.5rem;
+  opacity: 1;
+}
+
+.primary-highlight::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0.25rem;
+  height: 60%;
+  background-color: var(--theme-text-secondary);
+  opacity: 0.3;
+  border-radius: 0 0.125rem 0.125rem 0;
+}
+
+/* 二级菜单高亮区域 */
+.secondary-highlight {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0.5rem;
+  background-color: var(--theme-accent-color);
+  box-shadow: 0 0 0.5rem var(--theme-accent-color);
+  transition: transform var(--transition-base), height var(--transition-base), opacity var(--transition-base);
+  z-index: 11;
+  pointer-events: none;
 }
 
 .menu-group {
@@ -400,37 +713,6 @@ watch(() => route.path, () => {
 
 .primary-item.active::before {
   opacity: 1;
-  background-color: var(--theme-accent-color);
-}
-
-/* 激活指示器 */
-.active-indicator {
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 0.75rem;
-  background-color: transparent;
-  transition: all var(--transition-fast);
-  box-shadow: 0 0 0.5rem transparent;
-}
-
-.active-indicator.active {
-  background-color: var(--theme-accent-color);
-  box-shadow: 0 0 0.75rem var(--theme-accent-color);
-}
-
-.active-indicator.active::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0.25rem;
-  height: 60%;
-  background-color: var(--theme-text-secondary);
-  opacity: 0.3;
-  border-radius: 0 0.125rem 0.125rem 0;
 }
 
 /* 一级菜单图标 */
@@ -595,11 +877,6 @@ watch(() => route.path, () => {
   color: var(--theme-text-primary);
 }
 
-.secondary-item.active::before {
-  background-color: var(--theme-accent-color);
-  box-shadow: 0 0 0.5rem var(--theme-accent-color);
-}
-
 .secondary-dot {
   width: 0.375rem;
   height: 0.375rem;
@@ -629,22 +906,6 @@ watch(() => route.path, () => {
   opacity: 1;
   width: auto;
   margin-left: 0.5rem;
-}
-
-.secondary-indicator {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 0.25rem;
-  height: 0;
-  background-color: var(--theme-accent-color);
-  transition: height var(--transition-fast);
-  border-radius: 0.125rem 0 0 0.125rem;
-}
-
-.secondary-indicator.active {
-  height: 60%;
 }
 
 /* 底部装饰 */
@@ -767,12 +1028,6 @@ watch(() => route.path, () => {
     opacity: 1;
     max-height: 20rem;
     display: block;
-  }
-
-  /* 图标缩放适配 */
-  .sidebar.drawer-open .logo-icon {
-    width: 3.5rem;
-    height: 3.5rem;
   }
 }
 </style>
