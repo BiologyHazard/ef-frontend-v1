@@ -43,7 +43,6 @@ const animateLogo = () => {
   const drawTimeline = gsap.timeline();
 
   logoPaths.value.forEach((path, index) => {
-    const length = path.getTotalLength();
     drawTimeline.to(
         path,
         {

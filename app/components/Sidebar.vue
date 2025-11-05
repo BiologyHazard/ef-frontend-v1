@@ -143,8 +143,6 @@
 </template>
 
 <script lang="ts" setup>
-import {getDOMElement} from "~/utils/domUtil";
-
 interface Props {
   isDrawerOpen?: boolean
 }
