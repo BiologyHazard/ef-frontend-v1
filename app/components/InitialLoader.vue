@@ -45,13 +45,13 @@ const animateLogo = () => {
   logoPaths.value.forEach((path, index) => {
     const length = path.getTotalLength();
     drawTimeline.to(
-      path,
-      {
-        strokeDashoffset: 0,
-        duration: 0.6,
-        ease: 'power2.out',
-      },
-      index * 0.1, // 每个路径间隔0.1秒开始
+        path,
+        {
+          strokeDashoffset: 0,
+          duration: 0.6,
+          ease: 'power2.out',
+        },
+        index * 0.1, // 每个路径间隔0.1秒开始
     );
   });
 };
@@ -83,16 +83,16 @@ const animateProgress = () => {
 
   // 同时动画进度条和透明度
   progressTimeline
-    .to(progressCircleRef.value, {
-      strokeDashoffset: 0,
-      duration: 2,
-      ease: 'power2.out',
-    }, 0)
-    .to([logoRef.value, progressCircleRef.value], {
-      opacity: 0,
-      duration: 2,
-      ease: 'power2.out',
-    }, 0);
+      .to(progressCircleRef.value, {
+        strokeDashoffset: 0,
+        duration: 2,
+        ease: 'power2.out',
+      }, 0)
+      .to([logoRef.value, progressCircleRef.value], {
+        opacity: 0,
+        duration: 2,
+        ease: 'power2.out',
+      }, 0);
 };
 
 // 创建六边形矩阵（揭幕阶段）
@@ -111,7 +111,7 @@ const createBlocks = () => {
     hexagonDef = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
     hexagonDef.setAttribute('id', 'loading_hexagon');
     hexagonDef.setAttribute('points', '0,-50 43.3,-25 43.3,25 0,50 -43.3,25 -43.3,-25');
-    // 使用CSS变量支持主题化
+    // 支持主题变化
     hexagonDef.setAttribute('fill', 'var(--theme-hexagon-fill)');
     if (!containerRef.value.querySelector('defs')) {
       containerRef.value.insertBefore(defs, containerRef.value.firstChild);
@@ -175,7 +175,7 @@ const prepareRevealAnimation = () => {
 // 收集logo中的所有路径元素
 const collectLogoPaths = () => {
   if (!logoRef.value) return;
-  
+
   logoPaths.value = [];
   // 收集所有 path 元素
   const paths = logoRef.value.querySelectorAll('path');
@@ -258,9 +258,9 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
                   class="logo-path"
                   d="M14.4413 32.252L32.1293 32.252L32.1293 28.908L25.6613 28.908L25.6613 0L22.5813 0C20.8213 1.012 18.7533 1.76 15.8933 2.288L15.8933 4.84L21.6573 4.84L21.6573 28.908L14.4413 28.908L14.4413 32.252Z"
                   stroke="currentColor"
-                  stroke-width="1.5"
                   stroke-linecap="round"
                   stroke-linejoin="round"
+                  stroke-width="1.5"
               />
             </g>
             <ellipse
@@ -279,8 +279,8 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
                 cy="15.711997985839844"
                 r="3.5"
                 stroke="currentColor"
-                stroke-width="1.5"
                 stroke-linecap="round"
+                stroke-width="1.5"
             />
             <ellipse
                 class="logo-path"
@@ -296,17 +296,17 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
                 class="logo-path"
                 d="M8.56934 8.712L6.7411 8.04025L6.06934 6.212L5.39759 8.04025L3.56934 8.712L5.39759 9.38375L6.06934 11.212L6.7411 9.38375L8.56934 8.712Z"
                 stroke="currentColor"
-                stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                stroke-width="1.5"
             />
             <path
                 class="logo-path"
                 d="M41.5693 25.712L39.7411 25.0402L39.0693 23.212L38.3976 25.0402L36.5693 25.712L38.3976 26.3837L39.0693 28.212L39.7411 26.3837L41.5693 25.712Z"
                 stroke="currentColor"
-                stroke-width="1.5"
                 stroke-linecap="round"
                 stroke-linejoin="round"
+                stroke-width="1.5"
             />
           </svg>
           <!-- 环形进度条 -->
@@ -318,7 +318,7 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
                   <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
                   <feOffset dx="0" dy="0" result="offsetblur"/>
                   <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.5"/>
+                    <feFuncA slope="0.5" type="linear"/>
                   </feComponentTransfer>
                   <feMerge>
                     <feMergeNode/>
@@ -370,7 +370,7 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
 
       <!-- 揭幕阶段（从一开始就渲染，但动画暂停） -->
       <div v-if="showRevealPhase" :class="{ 'reveal-active': stage === 'reveal' }" class="reveal-phase">
-        <svg ref="containerRef" class="loading" viewBox="0 0 1000 1000">
+        <svg ref="containerRef" class="reveal-svg" viewBox="0 0 1000 1000">
           <defs>
             <polygon
                 id="loading_hexagon"
@@ -455,17 +455,17 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
   height: 100%;
   border-radius: 50%;
   background-image: linear-gradient(
-    -45deg,
-    transparent,
-    transparent 13.9512529279%,
-    var(--theme-progress-color) 0,
-    var(--theme-progress-color) 36.0487470721%,
-    transparent 0,
-    transparent 63.9512529279%,
-    var(--theme-progress-color) 0,
-    var(--theme-progress-color) 86.0487470721%,
-    transparent 0,
-    transparent
+      -45deg,
+      transparent,
+      transparent 13.9512529279%,
+      var(--theme-progress-color) 0,
+      var(--theme-progress-color) 36.0487470721%,
+      transparent 0,
+      transparent 63.9512529279%,
+      var(--theme-progress-color) 0,
+      var(--theme-progress-color) 86.0487470721%,
+      transparent 0,
+      transparent
   );
   background-size: 0.5rem 0.5rem;
   background-repeat: repeat;
@@ -522,10 +522,7 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
 /* 揭幕阶段 */
 .reveal-phase {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -542,9 +539,11 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
   pointer-events: auto;
 }
 
-.loading {
-  width: 100%;
-  height: auto;
+/* 预防svg高度不够 */
+@media (max-width: 940px) {
+  .reveal-svg {
+    transform: scale(2.5);
+  }
 }
 
 .loading_block {
