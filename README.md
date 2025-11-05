@@ -21,6 +21,8 @@ ef-frontend-v1/
 ├── public/                       # 公共静态资源目录
 │   ├── favicon.ico
 │   └── robots.txt
+├── i18n/                         # 国际化文件
+├── custom/                       # 自定义文件，用于存放不被Nuxt自动识别的文件
 ├── nuxt.config.ts                # Nuxt 配置文件
 ├── tsconfig.json                 # TypeScript 配置文件
 └── package.json                  # 项目依赖配置
