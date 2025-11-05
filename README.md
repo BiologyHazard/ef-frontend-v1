@@ -21,7 +21,7 @@ ef-frontend-v1/
 ├── public/                       # 公共静态资源目录
 │   ├── favicon.ico
 │   └── robots.txt
-├── i18n/                         # 国际化文件
+├── i18n/                         # 国际化文件目录，不会被Nuxt自动识别，但会被@nuxtjs/i18n库自动识别
 ├── custom/                       # 自定义文件，用于存放不被Nuxt自动识别的文件
 ├── shared/                       # 共享工具目录
 │   └── utils/                    # 工具函数
