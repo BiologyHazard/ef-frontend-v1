@@ -268,6 +268,8 @@ const handleImageError = (event: Event) => {
   flex-direction: column;
   gap: 1rem;
   height: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .card-header {

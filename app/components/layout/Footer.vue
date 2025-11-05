@@ -41,7 +41,7 @@
     <!-- 备案信息 -->
     <div class="footer-beian">
       <img 
-        src="#"
+        src="/images/website-record.png"
         alt="备案图标" 
         class="beian-icon"
         @error="handleImageError"
