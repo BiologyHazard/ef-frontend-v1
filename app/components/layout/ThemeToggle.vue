@@ -2,7 +2,7 @@
   <button
     class="theme-toggle"
     @click="toggleTheme"
-    :aria-label="$t('common.theme')"
+    :aria-label="$t('layout.theme')"
   >
     <div class="toggle-bg"></div>
     <svg 

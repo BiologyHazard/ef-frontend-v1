@@ -1,7 +1,7 @@
 <template>
   <div class="friend-links-page">
-    <h1 class="page-title">{{ $t('page.friendLinks') }}</h1>
-    <p class="page-description">{{ $t('page.friendLinksDescription') }}</p>
+    <h1 class="page-title">{{ $t('page.others.friendLinks.friendLinks') }}</h1>
+    <p class="page-description">{{ $t('page.others.friendLinks.friendLinksDescription') }}</p>
 
     <!-- 加载状态 -->
     <div v-if="pending" class="loading-container">

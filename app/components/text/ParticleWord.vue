@@ -12,7 +12,7 @@
         class="particle-loading"
         :style="{ color: textColor }"
       >
-        {{ $t('common.particleLoading') }}
+        {{ $t('component.particleWord.loading') }}
       </div>
     </div>
   </div>
@@ -200,7 +200,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  text: t('common.siteName'),
+  text: t('layout.siteName'),
   className: '',
   color: undefined
 });

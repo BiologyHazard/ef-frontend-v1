@@ -4,7 +4,6 @@
     "friendLinks": "Friend Links"
   },
   "common": {
-    "theme": "Theme",
     "language": "Language",
     "light": "Light",
     "dark": "Dark",
@@ -13,13 +12,24 @@
     "loading": "Loading...",
     "error": "Error",
     "retry": "Retry",
-    "noData": "No data available",
-    "siteName": "EndField Yituliu",
-    "particleLoading": "Loading particle animation..."
+    "noData": "No data available"
+  },
+  "layout": {
+    "theme": "Theme",
+    "siteName": "EndField Yituliu"
+  },
+  "component": {
+    "particleWord": {
+      "loading": "Loading particle animation..."
+    }
   },
   "page": {
-    "friendLinks": "Friend Links",
-    "friendLinksDescription": "Here are some excellent tools and resource websites related to Arknights"
+    "others": {
+      "friendLinks": {
+        "friendLinks": "Friend Links",
+        "friendLinksDescription": "Here are some excellent tools and resource websites related to Arknights"
+      }
+    }
   },
   "footer": {
     "copyrightTitle": "Copyright Notice and License Agreement",

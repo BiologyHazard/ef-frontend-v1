@@ -38,7 +38,7 @@
       </div>
       <!-- 中文的长度不用换行，加个样式进行防抖 -->
       <div :style="{ whiteSpace : currentLocale === 'zh-CN' ? 'nowrap' : 'normal' }" class="logo-text">{{
-          $t('common.siteName')
+          $t('layout.siteName')
         }}
       </div>
       <div class="logo-divider"></div>

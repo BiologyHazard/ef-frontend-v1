@@ -119,13 +119,13 @@ const getPageTitle = () => {
     for (const secondaryItem of primaryItem.children) {
       if (secondaryItem.routePath === route.path && secondaryItem.nameKey) {
         const pageName = t(secondaryItem.nameKey)
-        const siteName = t('common.siteName')
+        const siteName = t('layout.siteName')
         return `${pageName} - ${siteName}`
       }
     }
   }
   // 默认标题
-  return t('common.siteName')
+  return t('layout.siteName')
 }
 
 useHead({

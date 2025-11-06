@@ -4,7 +4,6 @@
     "friendLinks": "友情链接"
   },
   "common": {
-    "theme": "主题",
     "language": "语言",
     "light": "浅色",
     "dark": "深色",
@@ -13,13 +12,24 @@
     "loading": "加载中...",
     "error": "错误",
     "retry": "重试",
-    "noData": "暂无数据",
-    "siteName": "终末地一图流",
-    "particleLoading": "正在加载粒子动画..."
+    "noData": "暂无数据"
+  },
+  "layout": {
+    "theme": "主题",
+    "siteName": "终末地一图流"
+  },
+  "component": {
+    "particleWord": {
+      "loading": "正在加载粒子动画..."
+    }
   },
   "page": {
-    "friendLinks": "友情链接",
-    "friendLinksDescription": "以下是一些与明日方舟相关的优秀工具和资源网站"
+    "others": {
+      "friendLinks": {
+        "friendLinks": "友情链接",
+        "friendLinksDescription": "以下是一些与明日方舟相关的优秀工具和资源网站"
+      }
+    }
   },
   "footer": {
     "copyrightTitle": "版权声明与许可协议",
