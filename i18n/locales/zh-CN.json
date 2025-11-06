@@ -1,7 +1,7 @@
 {
   "menu": {
-    "primary3": "其它",
-    "secondary3_1": "友情链接"
+    "others": "其它",
+    "friendLinks": "友情链接"
   },
   "common": {
     "theme": "主题",

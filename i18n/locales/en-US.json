@@ -1,7 +1,7 @@
 {
   "menu": {
-    "primary3": "Others",
-    "secondary3_1": "Friend Links"
+    "others": "Others",
+    "friendLinks": "Friend Links"
   },
   "common": {
     "theme": "Theme",
