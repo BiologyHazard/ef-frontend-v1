@@ -123,10 +123,23 @@
                 :to="secondaryItem.routePath"
                 class="secondary-item"
                 @click="handleSecondaryClick"
+                @mouseenter="handleSecondaryHover(secondaryItem.routePath, $event)"
+                @mouseleave="handleSecondaryLeave(secondaryItem.routePath)"
             >
-              <!-- 二级菜单装饰点 -->
-              <svg class="secondary-dot" viewBox="0 0 6 6" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="3" cy="3" fill="currentColor" r="2"/>
+              <!-- 二级菜单图标 -->
+              <svg
+                  v-if="secondaryItem.iconPath"
+                  :ref="el => setSecondaryIconRef(el, secondaryItem.routePath)"
+                  :viewBox="secondaryItem.iconViewBox || '0 0 24 24'"
+                  class="secondary-icon"
+                  xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                    :d="secondaryItem.iconPath"
+                    class="secondary-icon-path"
+                    fill="currentColor"
+                    stroke="none"
+                />
               </svg>
               <span class="secondary-text">{{ $t(`menu.${secondaryItem.i18nKey}`) }}</span>
             </NuxtLink>
@@ -143,6 +156,8 @@
 </template>
 
 <script lang="ts" setup>
+import {gsap} from 'gsap'
+
 interface Props {
   isDrawerOpen?: boolean
 }
@@ -171,7 +186,12 @@ const activePrimary = computed(() => {
 // 菜单项 ref 存储
 const primaryItemRefs = ref<Map<number, HTMLElement>>(new Map())
 const secondaryItemRefs = ref<Map<string, HTMLElement>>(new Map())
+const secondaryIconRefs = ref<Map<string, SVGSVGElement>>(new Map())
 const menuContainerRef = ref<HTMLElement | null>(null)
+
+// SVG 绘制动画相关的 ref
+const activeAnimationPaths = ref<Map<string, SVGPathElement[]>>(new Map())
+const activeAnimations = ref<Map<string, gsap.core.Timeline>>(new Map())
 
 // 高亮区域位置和高度
 const primaryHighlightTop = ref(0)
@@ -197,6 +217,15 @@ const setSecondaryItemRef = (el: any, primaryIndex: number, secondaryIndex: numb
     secondaryItemRefs.value.set(path, el)
   } else {
     secondaryItemRefs.value.delete(path)
+  }
+}
+
+// 设置二级菜单图标 ref
+const setSecondaryIconRef = (el: any, path: string) => {
+  if (el) {
+    secondaryIconRefs.value.set(path, el)
+  } else {
+    secondaryIconRefs.value.delete(path)
   }
 }
 
@@ -299,6 +328,122 @@ const handleSecondaryClick = () => {
 
 const isActiveRoute = (path: string) => {
   return route.path === path
+}
+
+// 收集图标中的所有路径元素
+const collectIconPaths = (iconRef: SVGSVGElement): SVGPathElement[] => {
+  if (!iconRef) return []
+  const paths: SVGPathElement[] = []
+  const pathElements = iconRef.querySelectorAll('.secondary-icon-path')
+  pathElements.forEach((path) => {
+    paths.push(path as SVGPathElement)
+  })
+  return paths
+}
+
+// 绘制二级菜单图标动画（参考 InitialLoader 的 logo 绘制逻辑）
+const animateSecondaryIcon = (path: string) => {
+  const iconRef = secondaryIconRefs.value.get(path)
+  if (!iconRef) return
+
+  // 收集路径元素
+  const iconPaths = collectIconPaths(iconRef)
+  if (iconPaths.length === 0) return
+
+  // 清理之前的动画
+  const existingAnimation = activeAnimations.value.get(path)
+  if (existingAnimation) {
+    existingAnimation.kill()
+  }
+
+  // 过滤出有效的路径（长度大于0）
+  const validPaths = iconPaths.filter((pathEl) => {
+    const length = pathEl.getTotalLength()
+    return length > 0
+  })
+
+  if (validPaths.length === 0) return
+
+  // 为每个路径设置初始状态（完全隐藏）
+  validPaths.forEach((pathEl) => {
+    gsap.set(pathEl, {
+      stroke: 'none',
+      opacity: 1,
+      strokeWidth: 1,
+      fill: 'none',
+    })
+  })
+
+  // 创建时间线，逐个绘制路径
+  const drawTimeline = gsap.timeline()
+  validPaths.forEach((pathEl, index) => {
+    const length = pathEl.getTotalLength()
+    drawTimeline.to(
+        pathEl,
+        {
+          strokeDasharray: length,
+          strokeDashoffset: length * 1.5,
+          stroke: 'currentColor',
+          duration: 1,
+          ease: 'power2.in',
+        },
+        index * 0.1, // 每个路径间隔0.1秒开始
+    )
+  })
+
+  validPaths.forEach((pathEl, index) => {
+    drawTimeline.to(
+        pathEl,
+        {
+          strokeDashoffset: 0,
+          stroke: 'currentColor',
+          duration: 1.5,
+          ease: 'power2.in',
+        },
+        index * 0.1, // 每个路径间隔0.1秒开始
+    )
+  })
+
+  // 保存动画引用
+  activeAnimations.value.set(path, drawTimeline)
+  activeAnimationPaths.value.set(path, validPaths)
+}
+
+// 重置二级菜单图标（移除动画效果）
+const resetSecondaryIcon = (path: string) => {
+  const existingAnimation = activeAnimations.value.get(path)
+  if (existingAnimation) {
+    existingAnimation.kill()
+    activeAnimations.value.delete(path)
+  }
+
+  const iconPaths = activeAnimationPaths.value.get(path)
+  if (iconPaths) {
+    iconPaths.forEach((pathEl) => {
+      gsap.set(pathEl, {
+        strokeDasharray: 0,
+        strokeDashoffset: 0,
+        opacity: 1,
+        fill: 'currentColor',
+        stroke: 'none',
+      })
+    })
+    activeAnimationPaths.value.delete(path)
+  }
+}
+
+// 处理二级菜单悬停
+const handleSecondaryHover = (path: string, event: MouseEvent) => {
+  // 只有侧边栏展开时才执行动画
+  if (isSidebarExpanded.value || props.isDrawerOpen) {
+    animateSecondaryIcon(path)
+  }
+}
+
+// 处理二级菜单离开
+const handleSecondaryLeave = (path: string) => {
+  // 重置动画
+  resetSecondaryIcon(path)
 }
 
 // 自动展开当前路由所在的菜单组
@@ -858,16 +1003,22 @@ onUnmounted(() => {
   color: var(--theme-text-primary);
 }
 
-.secondary-dot {
-  width: 0.375rem;
-  height: 0.375rem;
+.secondary-icon {
+  width: 1.25rem;
+  height: 1.25rem;
   color: var(--theme-text-secondary);
   transition: all var(--transition-fast);
   flex-shrink: 0;
 }
 
-.secondary-item:hover .secondary-dot,
-.secondary-item.active .secondary-dot {
+.secondary-icon-path {
+  fill: currentColor;
+  stroke: none;
+  transition: all var(--transition-fast);
+}
+
+.secondary-item:hover .secondary-icon,
+.secondary-item.active .secondary-icon {
   color: var(--theme-text-primary);
 }
 

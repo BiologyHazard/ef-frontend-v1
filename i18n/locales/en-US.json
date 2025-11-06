@@ -19,7 +19,8 @@
     "loading": "Loading...",
     "error": "Error",
     "retry": "Retry",
-    "noData": "No data available"
+    "noData": "No data available",
+    "siteName": "Arknights EndField Yituliu"
   },
   "page": {
     "roleList": "Character List Page",
@@ -34,7 +35,7 @@
     "copyrightText1": "Company names, trademarks, products, etc. mentioned on this website are assets of their respective owners, used for identification purposes only. Game images, animations, audio, and original text used on this website are solely for better presentation of game materials, and their copyright belongs to Arknights/Shanghai Hypergryph Network Technology Co., Ltd.",
     "copyrightText2": "Unless otherwise stated, other content on this website is licensed under the",
     "copyrightLink": "Creative Commons Attribution-NonCommercial 4.0 International License",
-    "copyrightText3": ". When reposting, publishing, or reproducing, distributing, or redistributing any content on this page in any form, you must indicate that it is reposted from Arknights One-Page Flow, and provide copyright identification, license agreement identification, disclaimer identification, and a direct link to the referenced page; and you may not use the content of this site or its derivative works for commercial purposes without permission.",
+    "copyrightText3": ". When reposting, publishing, or reproducing, distributing, or redistributing any content on this page in any form, you must indicate that it is reposted from Arknights EndField Yituliu, and provide copyright identification, license agreement identification, disclaimer identification, and a direct link to the referenced page; and you may not use the content of this site or its derivative works for commercial purposes without permission.",
     "copyrightText4": "This project is a free open-source project dedicated to helping Arknights players. If you have experience in development/data analysis/design/art, welcome to join the",
     "developmentGroup": "development group",
     "copyrightText5": ".",

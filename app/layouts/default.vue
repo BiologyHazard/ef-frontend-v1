@@ -107,6 +107,32 @@
 // 是否加载中
 const isInitialLoading = ref(true);
 
+// 动态设置页面标题
+const route = useRoute()
+const appConfig = useAppConfig()
+const menuItems = appConfig.menu.routes
+const {t} = useI18n()
+
+// 根据当前路由查找对应的页面名称
+const getPageTitle = () => {
+  for (const primaryItem of menuItems) {
+    for (const secondaryItem of primaryItem.children) {
+      if (secondaryItem.routePath === route.path && secondaryItem.nameKey) {
+        const pageName = t(secondaryItem.nameKey)
+        const siteName = t('common.siteName') || '终末地一图流'
+        return `${pageName} - ${siteName}`
+      }
+    }
+  }
+  // 默认标题
+  const siteName = t('common.siteName') || '终末地一图流'
+  return siteName
+}
+
+useHead({
+  title: computed(() => getPageTitle())
+})
+
 // 延迟隐藏加载器（2秒加载阶段 + 1秒揭幕阶段 = 约3秒）
 onMounted(() => {
   const timer = setTimeout(() => {
