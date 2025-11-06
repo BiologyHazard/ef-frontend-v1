@@ -15,10 +15,6 @@ export default defineNuxtPlugin((app) => {
                         primary: '#191919', // --color-text-primary
                         secondary: '#888', // --color-text-secondary
                         accent: '#191919', // --theme-accent-color
-                        error: '#f44336',
-                        warning: '#ff9800',
-                        info: '#2196f3',
-                        success: '#4caf50',
                         background: '#fafafa', // --color-light-bg
                         surface: '#ffffff', // --color-white
                         'on-primary': '#ffffff',
@@ -38,10 +34,6 @@ export default defineNuxtPlugin((app) => {
                         primary: '#fffa00', // --color-brand-yellow
                         secondary: '#ccc', // --color-text-light
                         accent: '#fffa00', // --color-brand-yellow
-                        error: '#f44336',
-                        warning: '#ff9800',
-                        info: '#2196f3',
-                        success: '#4caf50',
                         background: '#191919', // --color-dark
                         surface: '#1f1f1f', // --color-dark-gray
                         'on-primary': '#191919',
