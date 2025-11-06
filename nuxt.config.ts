@@ -1,4 +1,6 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import vuetify, {transformAssetUrls} from 'vite-plugin-vuetify'
+
 export default defineNuxtConfig({
     ssr: false, // 启用SSG渲染
     app: {
@@ -9,7 +11,12 @@ export default defineNuxtConfig({
 
     compatibilityDate: '2025-11-05', devtools: {enabled: true}, css: ['~/assets/css/global.css'],
 
-    modules: ['@nuxtjs/i18n'],
+    modules: ['@nuxtjs/i18n', (_options, nuxt) => {
+        nuxt.hooks.hook('vite:extendConfig', (config) => {
+            // @ts-expect-error
+            config.plugins.push(vuetify({autoImport: true}))
+        })
+    }],
 
     i18n: {
         locales: [{
@@ -19,5 +26,13 @@ export default defineNuxtConfig({
         }], langDir: 'locales', defaultLocale: 'zh-CN', strategy: 'no_prefix', detectBrowserLanguage: {
             useCookie: true, cookieKey: 'i18n_redirected', redirectOn: 'root'
         }
-    }
+    }, build: {
+        transpile: ['vuetify'],
+    }, vite: {
+        vue: {
+            template: {
+                transformAssetUrls,
+            },
+        },
+    },
 })
