@@ -17,19 +17,45 @@
           {{ t('page.home.contributorsDescription') }}
         </p>
       </div>
-      <div class="contributors__cards">
+      <div class="contributors__cards" v-if="contributors.length">
+        <ContainerContributorCard
+          v-for="contributor in contributors"
+          :key="contributor.name"
+          :contributor="contributor"
+        />
       </div>
+      <p v-else class="contributors__empty">
+        {{ t('component.contributorCard.empty') }}
+      </p>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
 
+import {computed} from 'vue'
+import contributorsData from '@/custom/info/contributors.json'
+
 definePageMeta({
   layout: 'default'
 })
 
 const { t } = useI18n()
+
+type LocalizedInfo = {
+  position: string
+  tags: string[]
+}
+
+type Contributor = {
+  name: string
+  avatarImg: string
+  link?: string
+  english: LocalizedInfo
+  chinese: LocalizedInfo
+}
+
+const contributors = computed<Contributor[]>(() => contributorsData.contributors ?? [])
 </script>
 
 <style scoped>
@@ -89,20 +115,23 @@ const { t } = useI18n()
 }
 
 .contributors__cards {
-  width: min(100%, 640px);
+  width: min(100%, 960px);
   display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
   justify-content: center;
+  align-items: stretch;
+}
+
+.contributors__empty {
+  color: var(--theme-text-secondary);
+  font-size: var(--font-size-base);
+  margin-top: var(--spacing-lg);
 }
 
 @media (max-width: 768px) {
   .contributors__cards {
-    transform: scale(0.85);
-  }
-}
-
-@media (max-width: 480px) {
-  .contributors__cards {
-    transform: scale(0.75);
+    gap: var(--spacing-md);
   }
 }
 </style>

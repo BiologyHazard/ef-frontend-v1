@@ -4,6 +4,7 @@
     "projectStructure": "Project Structure",
     "routeSetting": "Route Setting",
     "docsSetting": "Writing Docs",
+    "contributorSetting": "Contributor Setting",
     "commonQuestions": "Common Questions",
     "materialProfit": "Material Profit",
     "shopValue": "Shop Value",
@@ -31,6 +32,12 @@
   "component": {
     "particleWord": {
       "loading": "Loading particle animation..."
+    },
+    "contributorCard": {
+      "profileLink": "Profile",
+      "tagsLabel": "Responsible Content",
+      "empty": "No contributors to display yet.",
+      "avatarAlt": "{name}'s avatar"
     }
   },
   "page": {
@@ -94,6 +101,7 @@
       "projectStructure": "Project Structure",
       "routeSetting": "Route Setting",
       "docsSetting": "Writing Docs",
+      "contributorSetting": "Contributor Setting",
       "commonQuestions": "Common Questions"
     }
   }

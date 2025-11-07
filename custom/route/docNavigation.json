@@ -15,6 +15,10 @@
         "path": "/introduction/docs-setting"
       },
       {
+        "titleKey": "docs.items.contributorSetting",
+        "path": "/introduction/contributor-setting"
+      },
+      {
         "titleKey": "docs.items.commonQuestions",
         "path": "/introduction/common-questions"
       }

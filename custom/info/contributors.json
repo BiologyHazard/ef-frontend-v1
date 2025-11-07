@@ -2,6 +2,7 @@
   "contributors": [
     {
       "name": "山桜",
+      "avatarImg": "~/assets/avatar/contributors/anon.jpg",
       "link": "https://github.com/yamasakura",
       "english": {
         "position": "Site Manager",
@@ -20,6 +21,7 @@
     },
     {
       "name": "Zirunwang",
+      "avatarImg": "https://avatars.githubusercontent.com/u/84625349",
       "link": "https://space.bilibili.com/10057492",
       "english": {
         "position": "Creator",
@@ -40,6 +42,7 @@
     },
     {
       "name": "MilkWind",
+      "avatarImg": "~/assets/avatar/contributors/MilkWind.jpg",
       "link": "https://github.com/MilkWind",
       "english": {
         "position": "Creator",

@@ -4,6 +4,7 @@
     "projectStructure": "项目结构",
     "routeSetting": "路由设置",
     "docsSetting": "文档编写",
+    "contributorSetting": "贡献者设置",
     "commonQuestions": "常见问题",
     "materialProfit": "材料收益",
     "shopValue": "商店性价比",
@@ -31,6 +32,12 @@
   "component": {
     "particleWord": {
       "loading": "正在加载粒子动画..."
+    },
+    "contributorCard": {
+      "profileLink": "个人主页",
+      "tagsLabel": "负责内容",
+      "empty": "暂未收录贡献者。",
+      "avatarAlt": "{name}的头像"
     }
   },
   "page": {
@@ -94,6 +101,7 @@
       "projectStructure": "项目结构",
       "routeSetting": "路由设置",
       "docsSetting": "文档编写",
+      "contributorSetting": "贡献者设置",
       "commonQuestions": "常见问题"
     }
   }
