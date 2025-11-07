@@ -536,5 +536,10 @@ onUnmounted(() => {
     padding: 1.5rem;
   }
 }
+
+/* Vuetify样式覆盖 */
+:deep(.v-application){
+  background-color: transparent;
+}
 </style>
 
