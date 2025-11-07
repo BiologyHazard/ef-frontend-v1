@@ -1,14 +1,90 @@
 <template>
-  <aside 
-    class="docs-toc" 
+  <div 
+    class="docs-toc-wrapper"
     :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
   >
-    <!-- 装饰背景 -->
-    <div class="toc-bg-decorator"></div>
-    
-    <!-- 右侧装饰条 -->
-    <div class="toc-right-decoration"></div>
-    
+    <aside 
+      class="docs-toc" 
+      :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
+    >
+      <!-- 装饰背景 -->
+      <div class="toc-bg-decorator"></div>
+      
+      <!-- 右侧装饰条 -->
+      <div class="toc-right-decoration"></div>
+      
+      <!-- TOC 内容 -->
+      <div class="toc-content">
+        <div class="toc-header">
+          <h2 class="toc-title">{{ $t('docs.tableOfContents') }}</h2>
+        </div>
+        
+        <nav class="toc-nav" v-if="headings.length > 0" ref="tocNavRef">
+          <div
+            class="toc-highlight"
+            :style="{
+              transform: `translateY(${highlightTop}px)` ,
+              height: `${highlightHeight}px` ,
+              opacity: highlightHeight > 0 ? 1 : 0
+            }"
+          ></div>
+          <ul class="toc-list">
+            <li 
+              v-for="(heading, index) in headings" 
+              :key="index"
+              class="toc-item"
+              :class="`toc-item-level-${heading.depth}`"
+              :ref="el => setHeadingRef(el, heading.id)"
+            >
+              <a 
+                :href="`#${heading.id}`"
+                class="toc-link"
+                :class="{ 'is-active': activeHeading === heading.id }"
+                @click.prevent="scrollToHeading(heading.id)"
+              >
+                <svg
+                  class="toc-marker"
+                  :class="[
+                    `depth-${heading.depth}`,
+                    { 'is-active': activeHeading === heading.id }
+                  ]"
+                  viewBox="0 0 32 32"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <template v-if="heading.depth === 2">
+                    <polygon points="16,4 28,16 16,28 4,16" class="marker-diamond-outer" />
+                    <polygon points="16,8 24,16 16,24 8,16" class="marker-diamond-inner" />
+                    <polygon points="16,12 20,16 16,20 12,16" class="marker-diamond-core" />
+                    <line x1="16" y1="10" x2="16" y2="22" class="marker-cross" />
+                    <line x1="10" y1="16" x2="22" y2="16" class="marker-cross" />
+                  </template>
+                  <template v-else-if="heading.depth === 3">
+                    <polygon points="16,6 26,16 16,26 6,16" class="marker-diamond-outer" />
+                    <polygon points="16,11 21,16 16,21 11,16" class="marker-diamond-inner" />
+                    <line x1="16" y1="12" x2="16" y2="20" class="marker-cross" />
+                    <line x1="12" y1="16" x2="20" y2="16" class="marker-cross" />
+                  </template>
+                  <template v-else-if="heading.depth === 4">
+                    <polygon points="16,8 24,16 16,24 8,16" class="marker-diamond-outer" />
+                    <polygon points="16,13 19,16 16,19 13,16" class="marker-diamond-core" />
+                  </template>
+                  <template v-else>
+                    <polygon points="16,12 20,16 16,20 12,16" class="marker-diamond-dot" />
+                  </template>
+                </svg>
+                <span class="link-text">{{ heading.text }}</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        
+        <div v-else class="toc-empty">
+          <p>{{ $t('docs.noTableOfContents') }}</p>
+        </div>
+      </div>
+    </aside>
+
     <!-- 折叠按钮 -->
     <button 
       class="collapse-toggle"
@@ -26,78 +102,7 @@
         />
       </svg>
     </button>
-    
-    <!-- TOC 内容 -->
-    <div class="toc-content">
-      <div class="toc-header">
-        <h2 class="toc-title">{{ $t('docs.tableOfContents') }}</h2>
-      </div>
-      
-      <nav class="toc-nav" v-if="headings.length > 0" ref="tocNavRef">
-        <div
-          class="toc-highlight"
-          :style="{
-            transform: `translateY(${highlightTop}px)` ,
-            height: `${highlightHeight}px` ,
-            opacity: highlightHeight > 0 ? 1 : 0
-          }"
-        ></div>
-        <ul class="toc-list">
-          <li 
-            v-for="(heading, index) in headings" 
-            :key="index"
-            class="toc-item"
-            :class="`toc-item-level-${heading.depth}`"
-            :ref="el => setHeadingRef(el, heading.id)"
-          >
-            <a 
-              :href="`#${heading.id}`"
-              class="toc-link"
-              :class="{ 'is-active': activeHeading === heading.id }"
-              @click.prevent="scrollToHeading(heading.id)"
-            >
-              <svg
-                class="toc-marker"
-                :class="[
-                  `depth-${heading.depth}`,
-                  { 'is-active': activeHeading === heading.id }
-                ]"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true"
-              >
-                <template v-if="heading.depth === 2">
-                  <polygon points="16,4 28,16 16,28 4,16" class="marker-diamond-outer" />
-                  <polygon points="16,8 24,16 16,24 8,16" class="marker-diamond-inner" />
-                  <polygon points="16,12 20,16 16,20 12,16" class="marker-diamond-core" />
-                  <line x1="16" y1="10" x2="16" y2="22" class="marker-cross" />
-                  <line x1="10" y1="16" x2="22" y2="16" class="marker-cross" />
-                </template>
-                <template v-else-if="heading.depth === 3">
-                  <polygon points="16,6 26,16 16,26 6,16" class="marker-diamond-outer" />
-                  <polygon points="16,11 21,16 16,21 11,16" class="marker-diamond-inner" />
-                  <line x1="16" y1="12" x2="16" y2="20" class="marker-cross" />
-                  <line x1="12" y1="16" x2="20" y2="16" class="marker-cross" />
-                </template>
-                <template v-else-if="heading.depth === 4">
-                  <polygon points="16,8 24,16 16,24 8,16" class="marker-diamond-outer" />
-                  <polygon points="16,13 19,16 16,19 13,16" class="marker-diamond-core" />
-                </template>
-                <template v-else>
-                  <polygon points="16,12 20,16 16,20 12,16" class="marker-diamond-dot" />
-                </template>
-              </svg>
-              <span class="link-text">{{ heading.text }}</span>
-            </a>
-          </li>
-        </ul>
-      </nav>
-      
-      <div v-else class="toc-empty">
-        <p>{{ $t('docs.noTableOfContents') }}</p>
-      </div>
-    </div>
-  </aside>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -273,12 +278,18 @@ watch(() => props.isOpen, (open) => {
 </script>
 
 <style scoped>
+.docs-toc-wrapper {
+  position: relative;
+  z-index: 40;
+}
+
 .docs-toc {
   position: fixed;
   top: 4.5rem;
   right: 0;
   width: 20rem;
   height: calc(100vh - 4.5rem);
+  overflow-y: auto;
   background-color: var(--theme-bg-secondary);
   border-left: 2px solid var(--theme-border);
   transition: all var(--transition-base);
@@ -333,9 +344,9 @@ watch(() => props.isOpen, (open) => {
 
 /* 折叠按钮 */
 .collapse-toggle {
-  position: absolute;
-  top: 1rem;
-  left: -1rem;
+  position: fixed;
+  top: calc(4.5rem + 1rem);
+  right: 19rem;
   width: 2rem;
   height: 2rem;
   background-color: var(--theme-bg-secondary);
@@ -346,14 +357,8 @@ watch(() => props.isOpen, (open) => {
   align-items: center;
   justify-content: center;
   transition: all var(--transition-base);
-  z-index: 10;
+  z-index: 40;
   box-shadow: 0 0 0.5rem var(--theme-shadow-accent);
-}
-
-.collapse-toggle:hover {
-  background-color: var(--theme-bg-tertiary);
-  box-shadow: 0 0 0.75rem var(--theme-accent-color);
-  transform: scale(1.1);
 }
 
 .collapse-toggle svg {
@@ -363,7 +368,17 @@ watch(() => props.isOpen, (open) => {
   transition: transform var(--transition-base);
 }
 
-.docs-toc.is-collapsed .collapse-toggle svg {
+.docs-toc-wrapper.is-collapsed .collapse-toggle {
+  right: 2.5rem;
+}
+
+.collapse-toggle:hover {
+  background-color: var(--theme-bg-tertiary);
+  box-shadow: 0 0 0.75rem var(--theme-accent-color);
+  transform: scale(1.1);
+}
+
+.docs-toc-wrapper.is-collapsed .collapse-toggle svg {
   transform: rotate(180deg);
 }
 

@@ -1,14 +1,63 @@
 <template>
-  <aside 
-    class="docs-sidebar" 
+  <div 
+    class="docs-sidebar-wrapper"
     :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
   >
-    <!-- 装饰背景 -->
-    <div class="sidebar-bg-decorator"></div>
-    
-    <!-- 左侧装饰条 -->
-    <div class="sidebar-left-decoration"></div>
-    
+    <aside 
+      class="docs-sidebar" 
+      :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
+    >
+      <!-- 装饰背景 -->
+      <div class="sidebar-bg-decorator"></div>
+      
+      <!-- 左侧装饰条 -->
+      <div class="sidebar-left-decoration"></div>
+      
+      <!-- 侧边栏内容 -->
+      <div class="sidebar-content">
+        <div class="sidebar-header">
+          <h2 class="sidebar-title">{{ $t('docs.documentation') }}</h2>
+        </div>
+        
+        <nav class="sidebar-nav" ref="sidebarNavRef">
+          <div
+            class="nav-highlight"
+            :style="{
+              transform: `translateY(${highlightTop}px)` ,
+              height: `${highlightHeight}px` ,
+              opacity: highlightHeight > 0 ? 1 : 0
+            }"
+          ></div>
+          <div 
+            v-for="(section, sectionIndex) in docNavigation" 
+            :key="sectionIndex"
+            class="nav-section"
+          >
+            <h3 class="section-title">{{ $t(section.titleKey) }}</h3>
+            <ul class="nav-list">
+              <li 
+                v-for="(item, itemIndex) in section.items" 
+                :key="itemIndex"
+                class="nav-item"
+                :ref="el => setLinkRef(el, item.path)"
+              >
+                <NuxtLink 
+                  :to="item.path"
+                  class="nav-link"
+                  :class="{ 'is-active': isActivePath(item.path) }"
+                  @click="handleLinkClick"
+                >
+                  <div class="link-bg"></div>
+                  <div class="link-left-border"></div>
+                  <span class="link-text">{{ $t(item.titleKey) }}</span>
+                </NuxtLink>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+    </aside>
+
     <!-- 折叠按钮 -->
     <button 
       class="collapse-toggle"
@@ -26,51 +75,7 @@
         />
       </svg>
     </button>
-    
-    <!-- 侧边栏内容 -->
-    <div class="sidebar-content">
-      <div class="sidebar-header">
-        <h2 class="sidebar-title">{{ $t('docs.documentation') }}</h2>
-      </div>
-      
-      <nav class="sidebar-nav" ref="sidebarNavRef">
-        <div
-          class="nav-highlight"
-          :style="{
-            transform: `translateY(${highlightTop}px)` ,
-            height: `${highlightHeight}px` ,
-            opacity: highlightHeight > 0 ? 1 : 0
-          }"
-        ></div>
-        <div 
-          v-for="(section, sectionIndex) in docNavigation" 
-          :key="sectionIndex"
-          class="nav-section"
-        >
-          <h3 class="section-title">{{ $t(section.titleKey) }}</h3>
-          <ul class="nav-list">
-            <li 
-              v-for="(item, itemIndex) in section.items" 
-              :key="itemIndex"
-              class="nav-item"
-              :ref="el => setLinkRef(el, item.path)"
-            >
-              <NuxtLink 
-                :to="item.path"
-                class="nav-link"
-                :class="{ 'is-active': isActivePath(item.path) }"
-                @click="handleLinkClick"
-              >
-                <div class="link-bg"></div>
-                <div class="link-left-border"></div>
-                <span class="link-text">{{ $t(item.titleKey) }}</span>
-              </NuxtLink>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-  </aside>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -197,12 +202,18 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.docs-sidebar-wrapper {
+  position: relative;
+  z-index: 40;
+}
+
 .docs-sidebar {
   position: fixed;
   top: 4.5rem;
   left: 0;
   width: 18rem;
   height: calc(100vh - 4.5rem);
+  overflow-y: auto;
   background-color: var(--theme-bg-secondary);
   border-right: 2px solid var(--theme-border);
   transition: all var(--transition-base);
@@ -257,9 +268,9 @@ onUnmounted(() => {
 
 /* 折叠按钮 */
 .collapse-toggle {
-  position: absolute;
-  top: 1rem;
-  right: -1rem;
+  position: fixed;
+  top: calc(4.5rem + 1rem);
+  left: 17rem;
   width: 2rem;
   height: 2rem;
   background-color: var(--theme-bg-secondary);
@@ -270,8 +281,12 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   transition: all var(--transition-base);
-  z-index: 10;
+  z-index: 45;
   box-shadow: 0 0 0.5rem var(--theme-shadow-accent);
+}
+
+.docs-sidebar-wrapper.is-collapsed .collapse-toggle {
+  left: 2.5rem;
 }
 
 .collapse-toggle svg {
@@ -281,7 +296,7 @@ onUnmounted(() => {
   transition: transform var(--transition-base);
 }
 
-.docs-sidebar.is-collapsed .collapse-toggle svg {
+.docs-sidebar-wrapper.is-collapsed .collapse-toggle svg {
   transform: rotate(180deg);
 }
 
