@@ -4,9 +4,19 @@ import {gsap} from 'gsap';
 
 interface Props {
   isLoading: boolean;
+  /**
+   * 加载阶段持续时长（毫秒）
+   */
+  loadingDuration?: number;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  loadingDuration: 2000,
+});
+
+const emit = defineEmits<{
+  (event: 'complete'): void;
+}>();
 
 // 阶段管理：'loading' | 'reveal' | 'complete'
 const stage = ref<'loading' | 'reveal' | 'complete'>('loading');
@@ -55,7 +65,7 @@ const animateLogo = () => {
   });
 };
 
-// 环形进度条动画（2秒）
+// 环形进度条动画（可配置时长）
 const animateProgress = () => {
   if (!progressCircleRef.value || !logoRef.value) return;
 
@@ -84,12 +94,12 @@ const animateProgress = () => {
   progressTimeline
       .to(progressCircleRef.value, {
         strokeDashoffset: 0,
-        duration: 2,
+        duration: Math.max(props.loadingDuration, 0) / 1000,
         ease: 'power2.out',
       }, 0)
       .to([logoRef.value, progressCircleRef.value], {
         opacity: 0,
-        duration: 2,
+        duration: Math.max(props.loadingDuration, 0) / 1000,
         ease: 'power2.out',
       }, 0);
 };
@@ -144,6 +154,7 @@ const prepareRevealAnimation = () => {
     paused: true,
     onComplete: () => {
       stage.value = 'complete';
+      emit('complete');
     },
   })
       .set(blocks.value, {

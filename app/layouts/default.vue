@@ -1,5 +1,9 @@
 <template>
-  <AnnimationInitialLoader :is-loading="isInitialLoading"/>
+  <AnnimationInitialLoader
+      :is-loading="isInitialLoading"
+      :loading-duration="loadingDuration"
+      @complete="handleInitialLoaderComplete"
+  />
   <div class="layout-container">
     <header class="app-header">
       <!-- 装饰背景 -->
@@ -103,15 +107,22 @@
 </template>
 
 <script lang="ts" setup>
-// 初始动画加载器
-// 是否加载中
-const isInitialLoading = ref(true);
-
 // 动态设置页面标题
 const route = useRoute()
 const appConfig = useAppConfig()
+const initialLoaderConfig = appConfig.initialLoader ?? {}
 const menuItems = appConfig.menu.routes
 const {t} = useI18n()
+
+// 初始动画加载器
+const isInitialLoading = ref(initialLoaderConfig.enabled !== false)
+const loadingDuration = typeof initialLoaderConfig.loadingDuration === 'number'
+  ? initialLoaderConfig.loadingDuration
+  : 3000
+
+const handleInitialLoaderComplete = () => {
+  isInitialLoading.value = false
+}
 
 // 根据当前路由查找对应的页面名称
 const getPageTitle = () => {
@@ -131,15 +142,6 @@ const getPageTitle = () => {
 useHead({
   title: computed(() => getPageTitle())
 })
-
-// 延迟隐藏加载器（2秒加载阶段 + 1秒揭幕阶段 = 约3秒）
-onMounted(() => {
-  const timer = setTimeout(() => {
-    isInitialLoading.value = false;
-  }, 3000);
-
-  return () => clearTimeout(timer);
-});
 
 // 布局组件 - 主题初始化在 useTheme composable 中处理
 const isDrawerOpen = ref(false)
