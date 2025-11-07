@@ -61,6 +61,12 @@
         "vuetifyIcon": "mdi-routes"
       },
       {
+        "i18nKey": "docsSetting",
+        "nameKey": "menu.docsSetting",
+        "routePath": "/introduction/docs-setting",
+        "vuetifyIcon": "mdi-file-document-edit"
+      },
+      {
         "i18nKey": "commonQuestions",
         "nameKey": "menu.commonQuestions",
         "routePath": "/introduction/common-questions",
