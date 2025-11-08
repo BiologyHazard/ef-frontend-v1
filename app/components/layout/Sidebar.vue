@@ -522,7 +522,7 @@ const handleMouseEnter = () => {
   // 等待展开动画
   setTimeout(() => {
     checkSidebarExpanded()
-  }, 400)
+  }, 300)
   setTimeout(() => {
     updatePrimaryHighlight()
     updateSecondaryHighlight()
@@ -533,7 +533,7 @@ const handleMouseLeave = () => {
   // 等待收起动画
   setTimeout(() => {
     checkSidebarExpanded()
-  }, 400)
+  }, 300)
   setTimeout(() => {
     updatePrimaryHighlight()
     updateSecondaryHighlight()
@@ -1074,7 +1074,7 @@ onUnmounted(() => {
 /* 展开/折叠动画 - 用于点击展开/折叠 */
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: max-height var(--transition-base), opacity var(--transition-base);
+  transition: max-height var(--transition-fast), opacity var(--transition-base);
   overflow: hidden;
 }
 

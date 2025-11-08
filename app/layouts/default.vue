@@ -345,6 +345,7 @@ onUnmounted(() => {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  min-width: 100vw;
   min-height: 100vh;
   pointer-events: none;
   z-index: 0;

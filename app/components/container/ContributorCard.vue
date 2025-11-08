@@ -56,6 +56,119 @@ const resolvedAvatar = computed(() => {
 
 const tags = computed(() => localizedInfo.value.tags ?? [])
 
+const cardElement = ref<HTMLElement | null>(null)
+const tiltWrapper = ref<HTMLElement | null>(null)
+const innerElement = ref<HTMLElement | null>(null)
+const mediaElement = ref<HTMLElement | null>(null)
+
+let cardRect: DOMRect | null = null
+let animationFrameId: number | null = null
+let targetPercentX = 0
+let targetPercentY = 0
+
+function handleMouseEnter() {
+  updateCardRect()
+  setHoverState(true)
+}
+
+function handleMouseMove(event: MouseEvent) {
+  if (!cardRect) {
+    updateCardRect()
+  }
+
+  if (!cardRect) {
+    return
+  }
+
+  const {left, top, width, height} = cardRect
+  const relativeX = event.clientX - left
+  const relativeY = event.clientY - top
+
+  targetPercentX = clamp(relativeX / width - 0.5, -0.5, 0.5)
+  targetPercentY = clamp(relativeY / height - 0.5, -0.5, 0.5)
+
+  requestTransformUpdate()
+}
+
+function handleMouseLeave() {
+  targetPercentX = 0
+  targetPercentY = 0
+  requestTransformUpdate(() => {
+    setHoverState(false)
+  })
+}
+
+function requestTransformUpdate(onComplete?: () => void) {
+  if (animationFrameId != null) {
+    cancelAnimationFrame(animationFrameId)
+  }
+
+  animationFrameId = requestAnimationFrame(() => {
+    applyTransform(targetPercentX, targetPercentY)
+    animationFrameId = null
+    if (onComplete) {
+      onComplete()
+    }
+  })
+}
+
+function applyTransform(percentX: number, percentY: number) {
+  const rotateMax = 12
+  const offsetScale = 28
+
+  const rotateX = -percentY * rotateMax * 2
+  const rotateY = percentX * rotateMax * 2
+  const offsetX = percentX * offsetScale
+  const offsetY = percentY * offsetScale
+
+  if (tiltWrapper.value) {
+    tiltWrapper.value.style.transform = `translateZ(0) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`
+    tiltWrapper.value.style.transition = percentX === 0 && percentY === 0 ? 'transform var(--transition-base)' : 'transform 80ms ease-out'
+  }
+
+  if (mediaElement.value) {
+    mediaElement.value.style.transform = `translate3d(${offsetX * 0.6}px, ${offsetY * 0.6}px, 60px)`
+  }
+
+  if (innerElement.value) {
+    innerElement.value.style.transform = `translate3d(${offsetX * 0.35}px, ${offsetY * 0.35}px, 35px)`
+  }
+
+}
+
+function updateCardRect() {
+  if (!cardElement.value) {
+    cardRect = null
+    return
+  }
+
+  cardRect = cardElement.value.getBoundingClientRect()
+}
+
+function setHoverState(active: boolean) {
+  if (tiltWrapper.value) {
+    tiltWrapper.value.classList.toggle('is-hovered', active)
+  }
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max)
+}
+
+onMounted(() => {
+  window.addEventListener('resize', updateCardRect)
+  window.addEventListener('scroll', updateCardRect, true)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', updateCardRect)
+  window.removeEventListener('scroll', updateCardRect, true)
+  if (animationFrameId != null) {
+    cancelAnimationFrame(animationFrameId)
+    animationFrameId = null
+  }
+})
+
 function getFallbackAvatar(): string {
   const fallbackEntry = Object.entries(contributorAssets).find(([key]) =>
     key.endsWith('anon.jpg')
@@ -66,51 +179,58 @@ function getFallbackAvatar(): string {
 </script>
 
 <template>
-  <article class="contributor-card">
-    <div class="card__accent" aria-hidden="true" />
-    <div class="card__inner">
-      <div class="card__media">
-        <span class="card__media-backdrop stripe-pattern" aria-hidden="true" />
-        <img
-          class="card__avatar"
-          :src="resolvedAvatar"
-          :alt="t('component.contributorCard.avatarAlt', { name: contributor.name })"
-          loading="lazy"
-        >
-      </div>
-      <div class="card__content">
-        <div class="card__meta">
-          <a
-            v-if="contributor.link"
-            :href="contributor.link"
-            class="card__profile-link"
-            target="_blank"
-            rel="noopener"
+  <article
+    ref="cardElement"
+    class="contributor-card"
+    @mouseenter="handleMouseEnter"
+    @mousemove="handleMouseMove"
+    @mouseleave="handleMouseLeave"
+  >
+    <div ref="tiltWrapper" class="card__tilt">
+      <div ref="innerElement" class="card__inner">
+        <div ref="mediaElement" class="card__media">
+          <span class="card__media-backdrop stripe-pattern" aria-hidden="true" />
+          <img
+            class="card__avatar"
+            :src="resolvedAvatar"
+            :alt="t('component.contributorCard.avatarAlt', { name: contributor.name })"
+            loading="lazy"
           >
-            <span>{{ t('component.contributorCard.profileLink') }}</span>
-            <span aria-hidden="true" class="card__profile-icon">↗</span>
-          </a>
         </div>
-        <h3 class="card__name">
-          {{ contributor.name }}
-        </h3>
-        <p class="card__position">
-          {{ localizedInfo.position }}
-        </p>
-        <div class="card__divider" aria-hidden="true" />
-        <div class="card__tags-wrap" v-if="tags.length">
-          <span class="card__tags-label">
-            {{ t('component.contributorCard.tagsLabel') }}
-          </span>
-          <ul class="card__tags">
-            <li
-              v-for="tag in tags"
-              :key="`${contributor.name}-${tag}`"
-              class="card__tag"
+        <div class="card__content">
+          <div class="card__meta">
+            <a
+              v-if="contributor.link"
+              :href="contributor.link"
+              class="card__profile-link"
+              target="_blank"
+              rel="noopener"
             >
-              {{ tag }}
-            </li>
-          </ul>
+              <span>{{ t('component.contributorCard.profileLink') }}</span>
+              <span aria-hidden="true" class="card__profile-icon">↗</span>
+            </a>
+          </div>
+          <h3 class="card__name">
+            {{ contributor.name }}
+          </h3>
+          <p class="card__position">
+            {{ localizedInfo.position }}
+          </p>
+          <div class="card__divider" aria-hidden="true" />
+          <div class="card__tags-wrap" v-if="tags.length">
+            <span class="card__tags-label">
+              {{ t('component.contributorCard.tagsLabel') }}
+            </span>
+            <ul class="card__tags">
+              <li
+                v-for="tag in tags"
+                :key="`${contributor.name}-${tag}`"
+                class="card__tag"
+              >
+                {{ tag }}
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>
@@ -130,6 +250,7 @@ function getFallbackAvatar(): string {
   transition: transform var(--transition-base), box-shadow var(--transition-base);
   box-shadow: 0 0.75rem 1.5rem var(--theme-shadow-accent);
   isolation: isolate;
+  perspective: 1200px;
 }
 
 .contributor-card::before {
@@ -142,15 +263,18 @@ function getFallbackAvatar(): string {
   opacity: 0.85;
 }
 
-.card__accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0.5rem;
+.card__tilt {
+  position: relative;
+  width: 100%;
   height: 100%;
-  background: linear-gradient(180deg, var(--theme-border-active), var(--theme-accent-color));
-  box-shadow: 0 0 1.75rem var(--theme-shadow-accent-hover);
-  z-index: 1;
+  transform-style: preserve-3d;
+  transition: transform var(--transition-base);
+  will-change: transform;
+}
+
+.card__tilt.is-hovered {
+  transition: transform 80ms ease-out;
+  filter: drop-shadow(0 1.25rem 2.75rem var(--theme-shadow-accent-hover));
 }
 
 .card__inner {
@@ -161,6 +285,9 @@ function getFallbackAvatar(): string {
   gap: var(--spacing-md);
   padding: var(--spacing-lg);
   z-index: 2;
+  transform-style: preserve-3d;
+  transition: transform 120ms ease-out;
+  will-change: transform;
 }
 
 .card__media {
@@ -170,6 +297,9 @@ function getFallbackAvatar(): string {
   display: flex;
   align-items: center;
   justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform 120ms ease-out;
+  will-change: transform;
 }
 
 .card__media-backdrop {
@@ -194,11 +324,17 @@ function getFallbackAvatar(): string {
   transition: transform var(--transition-base);
 }
 
+.card__tilt.is-hovered .card__avatar {
+  transform: translateZ(80px);
+}
+
 .card__content {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
   justify-content: center;
+  transition: transform 160ms ease-out;
+  will-change: transform;
 }
 
 .card__meta {

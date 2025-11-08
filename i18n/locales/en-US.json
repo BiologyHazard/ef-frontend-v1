@@ -12,7 +12,8 @@
     "itemValueTable": "Item Value Table",
     "others": "Others",
     "friendLinks": "Friend Links",
-    "test": "Test"
+    "test": "Test",
+    "contributors": "Contributors"
   },
   "common": {
     "language": "Language",
@@ -43,9 +44,11 @@
   "page": {
     "home": {
       "welcome": "Welcome to the Endfield Yituliu data showcase site.",
-      "hint": "Choose a topic from the menu on the left to get started.",
-      "contributorsTitle": "Contributors & Collaborators",
-      "contributorsDescription": "These amazing creators help design, build, and maintain the project together."
+      "hint": "Choose a topic from the menu on the left to get started."
+    },
+    "contributors": {
+      "title": "Contributors & Collaborators",
+      "description": "These amazing creators help design, build, and maintain the project together."
     },
     "materialProfit": {
       "shopValue": {

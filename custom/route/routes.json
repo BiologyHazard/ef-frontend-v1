@@ -36,12 +36,18 @@
         "vuetifyIcon": "mdi-flask"
       },
       {
-        "i18nKey": "friendLinks",
-        "nameKey": "menu.friendLinks",
-        "routePath": "/others/friend-links",
-        "vuetifyIcon": "mdi-link"
-      }
-    ]
+      "i18nKey": "friendLinks",
+      "nameKey": "menu.friendLinks",
+      "routePath": "/others/friend-links",
+      "vuetifyIcon": "mdi-link"
+    },
+    {
+      "i18nKey": "contributors",
+      "nameKey": "menu.contributors",
+      "routePath": "/others/contributors",
+      "vuetifyIcon": "mdi-account-heart"
+    }
+  ]
   },
   {
     "i18nKey": "introduction",
