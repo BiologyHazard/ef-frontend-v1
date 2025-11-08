@@ -45,7 +45,7 @@
     </div>
 
     <!-- 菜单容器（用于高亮区域的定位） -->
-    <div ref="menuContainerRef" class="menu-container">
+    <div ref="menuContainerRef" class="menu-container hide-scrollbar">
       <!-- 一级菜单高亮区域 -->
       <div
           :style="{
@@ -61,7 +61,8 @@
           :style="{
             transform: `translateY(${secondaryHighlightTop}px)`,
             height: `${secondaryHighlightHeight}px`,
-            opacity: (secondaryHighlightHeight > 0 && isSidebarExpanded) ? 1 : 0
+        opacity: (!isSecondaryHighlightHidden && secondaryHighlightHeight > 0 && isSidebarExpanded) ? 1 : 0,
+        visibility: isSecondaryHighlightHidden ? 'hidden' : 'visible'
           }"
           class="secondary-highlight"
       ></div>
@@ -253,6 +254,14 @@ const secondaryHighlightHeight = ref(0)
 
 // 侧边栏展开状态（用于控制二级高亮区域的显示）
 const isSidebarExpanded = ref(false)
+
+const isSecondaryHighlightHidden = computed(() => {
+  const activeIndex = activePrimary.value
+  if (activeIndex < 0) {
+    return false
+  }
+  return !expandedItems.value.includes(activeIndex)
+})
 
 // 设置一级菜单项 ref
 const setPrimaryItemRef = (el: any, index: number) => {
@@ -478,6 +487,16 @@ watch(() => props.isDrawerOpen, (newValue) => {
   }, 400)
 })
 
+watch(isSecondaryHighlightHidden, (hidden) => {
+  if (hidden) {
+    secondaryHighlightHeight.value = 0
+  } else {
+    nextTick(() => {
+      updateSecondaryHighlight()
+    })
+  }
+})
+
 // 监听窗口大小变化和滚动（用于响应式）
 const handleResize = () => {
   setTimeout(() => {
@@ -579,7 +598,7 @@ onUnmounted(() => {
 .sidebar {
   background-color: var(--theme-bg-secondary);
   border-right: 2px solid var(--theme-accent-color);
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
   z-index: 100;
   box-sizing: border-box;
@@ -716,7 +735,7 @@ onUnmounted(() => {
 .menu-container {
   position: relative;
   flex: 1;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* 一级菜单高亮区域 */
@@ -1102,15 +1121,12 @@ onUnmounted(() => {
     transform: translateX(-100%);
     z-index: 160;
     box-shadow: 2px 0 1rem var(--theme-shadow-strong);
-    /* 禁用hover展开效果 */
-    pointer-events: none;
     /* 确保默认状态下不占据布局空间 */
     visibility: hidden;
   }
 
   .sidebar.drawer-open {
     transform: translateX(0);
-    pointer-events: auto;
     visibility: visible;
   }
 
