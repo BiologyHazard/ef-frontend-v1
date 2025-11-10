@@ -23,9 +23,6 @@ const emit = defineEmits<{
 // 阶段管理：'loading' | 'reveal' | 'complete'
 const stage = ref<'loading' | 'reveal' | 'complete'>('loading');
 
-//这个变量不知道干啥的
-const loadingPhaseRef = ref<HTMLDivElement | null>(null);  // 加载阶段容器引用
-
 // 初始化所有阶段（同时准备加载和揭幕阶段）
 const initAllPhases = () => {
   nextTick(() => {  // 在下次 DOM 更新后执行
@@ -266,7 +263,7 @@ const showRevealPhase = computed(() => props.isLoading && (stage.value === 'reve
     <!-- 如果正在加载则显示加载器 -->
     <div v-if="isLoading" class="initial-loader">
       <!-- 加载阶段 -->
-      <div v-if="showLoadingPhase" ref="loadingPhaseRef" class="loading-phase">
+      <div v-if="showLoadingPhase" class="loading-phase">
         <!-- Logo -->
         <div class="logo-container">
           <!-- Logo SVG 元素 -->
