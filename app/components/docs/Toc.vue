@@ -4,7 +4,7 @@
     :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
   >
     <aside 
-      class="docs-toc" 
+      class="docs-toc hide-scrollbar"
       :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
     >
       <!-- 装饰背景 -->
