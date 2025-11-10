@@ -412,7 +412,7 @@ onBeforeUnmount(() => {
   letter-spacing: 0.08em;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 385px) {
   .card__inner {
     flex-direction: column;
     text-align: center;
