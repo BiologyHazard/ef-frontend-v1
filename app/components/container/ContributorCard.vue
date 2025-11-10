@@ -228,9 +228,7 @@ onBeforeUnmount(() => {
 <style scoped>
 .contributor-card {
   position: relative;
-  width: 100%;
-  flex: 1 1 320px;
-  max-width: 360px;
+  flex: 1 1 420px;
   border-radius: var(--radius-md);
   border: 1px solid var(--theme-border);
   background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));

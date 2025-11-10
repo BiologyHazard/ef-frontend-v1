@@ -47,7 +47,6 @@ const contributors = computed<Contributor[]>(() => contributorsData.contributors
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 1200px;
 }
 
 .page-title {
