@@ -43,20 +43,29 @@ const initAllPhases = () => {
 };
 
 // 揭幕阶段相关
-const containerRef = ref<SVGSVGElement | null>(null);  // 揭幕阶段 SVG 容器引用
-const blocks = ref<SVGUseElement[]>([]);  // 六边形元素数组
+// 揭幕阶段 SVG 容器引用
+const containerRef = ref<SVGSVGElement | null>(null);
+// 六边形元素数组
+const blocks = ref<SVGUseElement[]>([]);
+// 六边形网格行数
+const row = 15;
+// 六边形网格列数
+const line = 15;
 
-const row = 15;  // 六边形网格行数
-const line = 15;  // 六边形网格列数
 // 创建六边形矩阵（揭幕阶段）
 const createBlocks = () => {
   // 如果没有容器元素则返回
   if (!containerRef.value) return;
 
   // 清空现有内容（保留 defs）
-  const existingGroups = containerRef.value.querySelectorAll('g');  // 查找所有 g 元素
-  existingGroups.forEach(group => group.remove());  // 移除所有 g 元素
-  blocks.value = [];  // 清空 blocks 数组
+  // 查找所有 g 元素
+  const existingGroups = containerRef.value.querySelectorAll('g');
+
+  // 移除所有 g 元素
+  existingGroups.forEach(group => group.remove());
+
+  // 清空 blocks 数组
+  blocks.value = [];
 
   // 创建六边形定义（如果不存在）
   let hexagonDef = containerRef.value.querySelector('#loading_hexagon');  // 查找已有的六边形定义
@@ -190,6 +199,8 @@ const animateLogo = () => {
 };
 
 const progressCircleRef = ref<SVGCircleElement | null>(null);  // 进度圆环元素引用
+
+
 // 环形进度条动画（可配置时长）
 const animateProgress = () => {
   // 如果没有进度圆环或 Logo 元素，则返回
