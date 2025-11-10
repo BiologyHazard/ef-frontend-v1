@@ -231,10 +231,13 @@ onBeforeUnmount(() => {
   flex: 1 1 420px;
   border-radius: var(--radius-md);
   border: 1px solid var(--theme-border);
-  background: linear-gradient(135deg, var(--theme-bg-secondary), var(--theme-bg-tertiary));
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--theme-bg-secondary) 55%, transparent),
+    color-mix(in srgb, var(--theme-bg-tertiary) 55%, transparent)
+  );
   overflow: hidden;
   transition: transform var(--transition-base), box-shadow var(--transition-base);
-  box-shadow: 0 0.75rem 1.5rem var(--theme-shadow-accent);
   isolation: isolate;
   perspective: 1200px;
 }
@@ -325,7 +328,7 @@ onBeforeUnmount(() => {
 .card__meta {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--spacing-sm);
 }
 
