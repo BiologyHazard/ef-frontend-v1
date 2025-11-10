@@ -446,7 +446,7 @@ onUnmounted(() => {
 /* 底部页脚 */
 .docs-footer {
   margin-left: 18rem;
-  margin-right: 15rem;
+  margin-right: 20rem;
   transition: margin var(--transition-base);
 }
 

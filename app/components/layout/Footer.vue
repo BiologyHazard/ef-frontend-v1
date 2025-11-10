@@ -72,7 +72,7 @@ const handleImageError = (event: Event) => {
 .app-footer {
   background-color: var(--theme-bg-secondary);
   border-top: 2px solid var(--theme-accent-color);
-  padding: 2.5rem 3.75rem;
+  padding: 2.5rem 2rem;
   position: relative;
   overflow: hidden;
   margin-top: auto;
