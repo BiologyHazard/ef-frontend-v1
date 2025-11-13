@@ -8,6 +8,10 @@ export default defineContentConfig({
             type: 'page',
             // 加载`content`目录下的每个文件
             source: '**',
+        }),
+        operations: defineCollection({
+            type: 'page',
+            source: '**',
         })
     }
 })

@@ -36,20 +36,11 @@ content/
 
 ## Complete Process for Adding New Documentation
 
-### Step 0: Manage Documentation Route Prefixes (if needed)
+### Part 1: Adding Documents Under Existing Top-Level Directories
 
-If your new document lives under a different top-level path (e.g. `/tutorials`), update the shared configuration in `app/app.config.ts` so every middleware can recognize it as part of the documentation portal.
+To add a new document under an existing top-level directory (like [/introduction](file:///d:/development-projects/contribution-projects/ef-frontend-v1/content/introduction)), follow these steps:
 
-```ts
-export default defineAppConfig({
-  // ...other config
-  docsRoutePrefixes: ['/introduction', '/tutorials']
-})
-```
-
-Add additional prefixes to the `docsRoutePrefixes` array as required. Existing documentation under `/introduction` is already configured.
-
-### Step 1: Create Markdown File
+#### Step 1: Create Markdown File
 
 Create new `.md` files under the category folder in the `content/` directory. Use the suffix `-zh` for Chinese and `-en` for English to keep the two language versions together.
 
@@ -63,13 +54,13 @@ content/introduction/new-document-zh.md
 content/introduction/new-document-en.md
 ```
 
-### Step 2: Write Documentation Content
+#### Step 2: Write Documentation Content
 
 Each Markdown file must include **Front Matter** (YAML format metadata at the beginning of the file).
 
 **Basic Template:**
 
-```markdown
+```
 ---
 title: Document Title
 description: Brief description of the document for SEO and preview
@@ -95,7 +86,7 @@ More content...
 | `title` | ✅ | Document title, displayed at the top of the page |
 | `description` | ✅ | Document description, displayed below the title |
 
-### Step 3: Update Documentation Navigation Configuration
+#### Step 3: Update Documentation Navigation Configuration
 
 Edit the `custom/route/docNavigation.json` file to add navigation items for the new document.
 
@@ -125,14 +116,47 @@ Edit the `custom/route/docNavigation.json` file to add navigation items for the 
 - **`path`**: Document path, corresponding to file path under content directory (without language prefix)
 - **`items`**: List of documents under this category
 
-### Step 4: Add Internationalization Translations
+#### Step 4: Update Routes Configuration
+
+After updating the documentation navigation, you also need to update the `custom/route/routes.json` file to ensure the new document appears in the main navigation menu.
+
+Find the section corresponding to your document's top-level directory (e.g., "introduction") and add a new child item:
+
+```json
+{
+  "i18nKey": "newDocument",
+  "nameKey": "menu.newDocument",
+  "routePath": "/introduction/new-document",
+  "vuetifyIcon": "mdi-file-document"
+}
+```
+
+#### Step 5: Add Internationalization Translations
 
 Add corresponding translations in `i18n/locales/zh-CN.json` and `i18n/locales/en-US.json`.
+
+**en-US.json:**
+
+```json
+{
+  "menu": {
+    "newDocument": "New Document"
+  },
+  "docs": {
+    "items": {
+      "newDocument": "New Document"
+    }
+  }
+}
+```
 
 **zh-CN.json:**
 
 ```json
 {
+  "menu": {
+    "newDocument": "新文档"
+  },
   "docs": {
     "sections": {
       "introduction": "开发指南"
@@ -144,17 +168,67 @@ Add corresponding translations in `i18n/locales/zh-CN.json` and `i18n/locales/en
 }
 ```
 
-**en-US.json:**
+### Part 2: Creating a New Top-Level Directory
 
-```json
-{
-  "docs": {
-    "items": {
-      "newDocument": "New Document"
-    }
-  }
-}
+To create a completely new top-level documentation directory, follow these steps:
+
+#### Step 1: Manage Documentation Route Prefixes
+
+If your new document lives under a different top-level path (e.g. `/tutorials`), update the shared configuration in `app/app.config.ts` so every middleware can recognize it as part of the documentation portal.
+
+```ts
+export default defineAppConfig({
+  // ...other config
+  docsRoutePrefixes: ['/introduction', '/tutorials']
+})
 ```
+
+Add additional prefixes to the `docsRoutePrefixes` array as required.
+
+#### Step 2: Configure Content Collection
+
+In `content.config.ts`, add a new collection definition for your top-level directory:
+
+```ts
+export default defineContentConfig({
+    collections: {
+        introduction: defineCollection({
+            // Specify content type
+            type: 'page',
+            // Load every file under the `content` directory
+            source: '**',
+        }),
+        [newCollectionName]: defineCollection({
+            type: 'page',
+            source: '**',
+        })
+    }
+})
+```
+
+#### Step 3: Create Route File for the New Directory
+
+Create a new file at `app/pages/[new-top-level-directory]/[...slug].vue` with the following content:
+
+```vue
+<template>
+  <DocumentPage :collection-name="collectionName" />
+</template>
+
+<script lang="ts" setup>
+// Use docs layout
+definePageMeta({
+  layout: 'docs'
+})
+
+// Set the collection name to match the new directory
+const collectionName = '[newCollectionName]'
+</script>
+```
+
+Replace `[newCollectionName]` with the actual name of your new collection (e.g., if you're creating a "tutorials" directory, use "tutorials").
+
+At this point, your new top-level directory is created. Now follow the steps in "Part 1" to add documents to your new top-level directory.
 
 ---
 

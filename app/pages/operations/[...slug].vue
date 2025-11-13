@@ -8,5 +8,7 @@ definePageMeta({
   layout: 'docs'
 })
 
-const collectionName = "introduction"
+// 设置集合名称以匹配新目录
+const collectionName = "operations"
 </script>
+

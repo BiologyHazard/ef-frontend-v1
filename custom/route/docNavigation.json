@@ -23,6 +23,15 @@
         "path": "/introduction/common-questions"
       }
     ]
+  },
+  {
+    "titleKey": "docs.sections.operations",
+    "items": [
+      {
+        "titleKey": "docs.items.infrastructureLayoutGuide",
+        "path": "/operations/infrastructure-layout-guide"
+      }
+    ]
   }
 ]
 

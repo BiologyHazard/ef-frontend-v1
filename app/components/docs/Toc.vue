@@ -107,6 +107,8 @@
 
 <script setup lang="ts">
 import type {ComponentPublicInstance} from 'vue'
+const { locale } = useI18n()
+
 // 定义 props
 interface Props {
   headings?: Array<{
@@ -137,33 +139,8 @@ const headingRefs = ref<Map<string, HTMLElement>>(new Map())
 const highlightTop = ref(0)
 const highlightHeight = ref(0)
 
-// 切换折叠状态
-const toggleCollapse = () => {
-  isCollapsed.value = !isCollapsed.value
-  if (isCollapsed.value) {
-    highlightHeight.value = 0
-  } else {
-    updateHighlight()
-  }
-}
-
-// 滚动到指定标题
-const scrollToHeading = (id: string) => {
-  const element = document.getElementById(id)
-  if (element) {
-    const top = element.offsetTop - 80 // 减去顶部导航栏高度
-    window.scrollTo({
-      top,
-      behavior: 'smooth'
-    })
-    activeHeading.value = id
-    
-    // 移动端关闭 TOC
-    if (props.isOpen) {
-      emit('close')
-    }
-  }
-}
+// 延迟更新高亮的定时器
+let highlightUpdateTimer: ReturnType<typeof setTimeout> | null = null
 
 // 监听滚动，更新激活的标题
 let scrollHandler: (() => void) | null = null
@@ -224,6 +201,46 @@ const updateHighlight = () => {
   })
 }
 
+// 延迟更新高亮
+const delayedUpdateHighlight = () => {
+  if (highlightUpdateTimer) {
+    clearTimeout(highlightUpdateTimer)
+  }
+  highlightUpdateTimer = setTimeout(() => {
+    updateHighlight()
+    highlightUpdateTimer = null
+  }, 400)
+}
+
+// 切换折叠状态
+const toggleCollapse = () => {
+  isCollapsed.value = !isCollapsed.value
+  if (isCollapsed.value) {
+    highlightHeight.value = 0
+  } else {
+    // 折叠/展开后延迟更新高亮
+    delayedUpdateHighlight()
+  }
+}
+
+// 滚动到指定标题
+const scrollToHeading = (id: string) => {
+  const element = document.getElementById(id)
+  if (element) {
+    const top = element.offsetTop - 80 // 减去顶部导航栏高度
+    window.scrollTo({
+      top,
+      behavior: 'smooth'
+    })
+    activeHeading.value = id
+    
+    // 移动端关闭 TOC
+    if (props.isOpen) {
+      emit('close')
+    }
+  }
+}
+
 onMounted(() => {
   scrollHandler = () => {
     const scrollTop = window.scrollY || document.documentElement.scrollTop
@@ -256,6 +273,9 @@ onUnmounted(() => {
     window.removeEventListener('scroll', scrollHandler)
   }
   window.removeEventListener('resize', updateHighlight)
+  if (highlightUpdateTimer) {
+    clearTimeout(highlightUpdateTimer)
+  }
 })
 
 watch(activeHeading, () => {
@@ -274,6 +294,11 @@ watch(() => props.isOpen, (open) => {
       updateHighlight()
     })
   }
+})
+
+// 监听语言切换
+watch(() => locale.value, () => {
+  delayedUpdateHighlight()
 })
 </script>
 

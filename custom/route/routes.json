@@ -85,6 +85,19 @@
         "vuetifyIcon": "mdi-help-circle"
       }
     ]
+  },
+  {
+    "i18nKey": "operations",
+    "nameKey": "menu.operations",
+    "vuetifyIcon": "mdi-cog",
+    "children": [
+      {
+        "i18nKey": "infrastructureLayoutGuide",
+        "nameKey": "menu.infrastructureLayoutGuide",
+        "routePath": "/operations/infrastructure-layout-guide",
+        "vuetifyIcon": "mdi-view-grid"
+      }
+    ]
   }
 ]
 

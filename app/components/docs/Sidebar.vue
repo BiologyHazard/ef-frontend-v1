@@ -4,7 +4,7 @@
     :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
   >
     <aside 
-      class="docs-sidebar" 
+      class="docs-sidebar hide-scrollbar"
       :class="{ 'is-collapsed': isCollapsed, 'is-open': isOpen }"
     >
       <!-- 装饰背景 -->
@@ -83,6 +83,7 @@ import type {ComponentPublicInstance} from 'vue'
 import docNavigationData from '@/custom/route/docNavigation.json'
 
 const route = useRoute()
+const { locale } = useI18n()
 
 // 定义 props
 interface Props {
@@ -104,6 +105,9 @@ const sidebarNavRef = ref<HTMLElement | null>(null)
 const linkRefs = ref<Map<string, HTMLElement>>(new Map())
 const highlightTop = ref(0)
 const highlightHeight = ref(0)
+
+// 延迟更新高亮的定时器
+let highlightUpdateTimer: ReturnType<typeof setTimeout> | null = null
 
 // 从 JSON 文件加载文档导航结构
 const docNavigation = computed(() => docNavigationData)
@@ -156,13 +160,25 @@ const updateHighlight = () => {
   })
 }
 
+// 延迟更新高亮
+const delayedUpdateHighlight = () => {
+  if (highlightUpdateTimer) {
+    clearTimeout(highlightUpdateTimer)
+  }
+  highlightUpdateTimer = setTimeout(() => {
+    updateHighlight()
+    highlightUpdateTimer = null
+  }, 400)
+}
+
 // 切换折叠状态
 const toggleCollapse = () => {
   isCollapsed.value = !isCollapsed.value
   if (isCollapsed.value) {
     highlightHeight.value = 0
   } else {
-    updateHighlight()
+    // 折叠/展开后延迟更新高亮
+    delayedUpdateHighlight()
   }
 }
 
@@ -191,6 +207,11 @@ watch(() => props.isOpen, (open) => {
   }
 })
 
+// 监听语言切换
+watch(() => locale.value, () => {
+  delayedUpdateHighlight()
+})
+
 onMounted(() => {
   updateHighlight()
   window.addEventListener('resize', handleResize)
@@ -198,6 +219,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize)
+  if (highlightUpdateTimer) {
+    clearTimeout(highlightUpdateTimer)
+  }
 })
 </script>
 

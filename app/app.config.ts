@@ -12,7 +12,8 @@ export default defineAppConfig({
     /**
      * 文档路由前缀列表，用于在中间件等位置统一判定文档页面
      */
-    docsRoutePrefixes: ['/introduction'], initialLoader: {
+    docsRoutePrefixes: ['/introduction', '/operations'],
+    initialLoader: {
         /**
          * 是否启用初始加载动画
          */
