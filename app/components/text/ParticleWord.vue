@@ -22,11 +22,11 @@
 const {t} = useI18n()
 
 // 画布尺寸
-const CANVAS_WIDTH = 1100;
-const CANVAS_HEIGHT = 170;
+const CANVAS_WIDTH = 800;
+const CANVAS_HEIGHT = 120;
 
 // 动画设置
-const ANIMATE_TIME = 30;
+const ANIMATE_TIME = 20;
 const OPACITY_STEP = 1 / ANIMATE_TIME;
 const RADIUS = 40; // 鼠标交互半径
 const INTENSITY = 0.95; // 排斥/吸引强度
@@ -140,7 +140,7 @@ class ParticleCanvas {
     tempCanvas.height = CANVAS_HEIGHT;
 
     // 设置文本属性
-    tempCtx.font = 'bold 150px Arial, sans-serif';
+    tempCtx.font = 'bold 100px Arial, sans-serif';
     tempCtx.textAlign = 'center';
     tempCtx.textBaseline = 'middle';
 
@@ -285,6 +285,7 @@ onUnmounted(() => {
 
 <style scoped>
 .particle-word-container {
+  transform: scale(1.1);
   margin: 1rem;
   display: flex;
   justify-content: center;
