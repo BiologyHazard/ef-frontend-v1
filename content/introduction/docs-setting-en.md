@@ -228,6 +228,32 @@ const collectionName = '[newCollectionName]'
 
 Replace `[newCollectionName]` with the actual name of your new collection (e.g., if you're creating a "tutorials" directory, use "tutorials").
 
+#### Step 4: Update Routes Configuration File
+
+In the `custom/route/routes.json` file, add a new top-level documentation route item. This route item must have `isDocs: true` set so the system can recognize it as a documentation route.
+
+**Configuration Example:**
+
+```json
+{
+  "i18nKey": "tutorials",
+  "nameKey": "menu.tutorials",
+  "vuetifyIcon": "mdi-school",
+  "isDocs": true,
+  "children": []
+}
+```
+
+**Field Description:**
+
+- **`i18nKey`**: Internationalization key name used to identify this route item
+- **`nameKey`**: Internationalization key for the menu name, corresponding to translations in i18n files
+- **`vuetifyIcon`**: Vuetify icon name, displayed in the navigation menu
+- **`isDocs`**: Must be set to `true` to identify this as a documentation route
+- **`children`**: Array of child routes, can be initialized as an empty array `[]`, and populated later when adding documents
+
+**Important:** Only after completing this step can you add documents under the new top-level documentation route. When adding documents, you need to add child items to the `children` array of this route item (refer to Step 4 in Part 1).
+
 At this point, your new top-level directory is created. Now follow the steps in "Part 1" to add documents to your new top-level directory.
 
 ---
