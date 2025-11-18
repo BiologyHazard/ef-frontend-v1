@@ -238,6 +238,13 @@ export default defineNuxtConfig({
             chunkSizeWarningLimit: 1000,
             
             /**
+             * 资源内联限制 (assetsInlineLimit)
+             * 小于此大小的资源会被内联为 base64，减少 HTTP 请求
+             * 单位：字节
+             */
+            assetsInlineLimit: 4096, // 4KB 以下的资源内联
+            
+            /**
              * Rollup 选项 (rollupOptions)
              * 自定义 Rollup 打包配置
              */
@@ -247,9 +254,11 @@ export default defineNuxtConfig({
                  * 控制构建输出的格式和分块策略
                  */
                 output: {
-                    // 设置最小 chunk 大小（单位：字节）
-                    // 小于这个大小的 chunk 会被自动合并
-                    experimentalMinChunkSize: 300 * 1024, // 300KB
+                    /**
+                     * 动态导入内联 (inlineDynamicImports)
+                     * 保持为 true 以强制 Rollup 将所有动态导入内联到主 bundle 中
+                     */
+                    inlineDynamicImports: true,
                 },
             },
         },
