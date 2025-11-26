@@ -41,6 +41,21 @@
       "tagsLabel": "负责内容",
       "empty": "暂未收录贡献者。",
       "avatarAlt": "{name}的头像"
+    },
+    "packCard": {
+      "stoneEquivalent": "源石等价",
+      "totalPulls": "总抽数",
+      "pricePerStone": "每石价格",
+      "pricePerPull": "每抽价格",
+      "perUnit": "/{unit}",
+      "contents": "礼包内容",
+      "equivalent": "折合",
+      "total": "共",
+      "daysLeft": "剩余 {days} 天",
+      "itemName": "物品名称",
+      "quantity": "数量",
+      "totalValue": "总价值",
+      "percentage": "占比"
     }
   },
   "page": {

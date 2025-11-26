@@ -41,6 +41,21 @@
       "tagsLabel": "Responsible Content",
       "empty": "No contributors to display yet.",
       "avatarAlt": "{name}'s avatar"
+    },
+    "packCard": {
+      "stoneEquivalent": "Stone Equivalent",
+      "totalPulls": "Total Pulls",
+      "pricePerStone": "Price per Stone",
+      "pricePerPull": "Price per Pull",
+      "perUnit": "/{unit}",
+      "contents": "Contents",
+      "equivalent": "Equivalent",
+      "total": "Total",
+      "daysLeft": "{days} days left",
+      "itemName": "Item Name",
+      "quantity": "Quantity",
+      "totalValue": "Total Value",
+      "percentage": "Percentage"
     }
   },
   "page": {
